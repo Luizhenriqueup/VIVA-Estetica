@@ -1,16 +1,24 @@
 {
-  "name": "back-end",
+  "name": "viva-estetica-back-end",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Back-end do projeto Viva Estetica Segura (esqueleto)",
+  "main": "src/server.js",
+  "type": "commonjs",
   "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "zod": "^4.1.12"
   }
 }
