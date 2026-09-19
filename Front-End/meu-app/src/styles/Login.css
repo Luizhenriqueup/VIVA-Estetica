@@ -1,9 +1,15 @@
 .screen{
-    background-color: rgb(48, 49, 58);
+    background-color: rgb(52, 78, 62);
 }
-.bgverde{
+.bg-verde{
     background-color: green;    
 }
 .verde{
     color: green;
+}
+.tamanhoImagem{
+    width: 200px;
+    height: auto;
+    margin: 0;
+    padding: 0;
 }

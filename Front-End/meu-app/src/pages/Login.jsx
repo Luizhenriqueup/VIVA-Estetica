@@ -1,5 +1,6 @@
-import LoginForm from "../components/LoginForm";
+import LoginForm from "../components/Login/LoginForm";
 import '../styles/Login.css'
+import logoViva from '../assets/viva-estetica.png'
 
 function Login() {
   function handleLogin(dados) {
@@ -10,10 +11,13 @@ function Login() {
   return (
     <div className="screen">
       <div className="container d-flex align-items-center justify-content-center min-vh-100">
-        <div className="card shadow-sm w-100" style={{ maxWidth: "400px" }}>
+        <div className="card shadow-sm w-100 bg-light" style={{ maxWidth: "400px" }}>
+          <div className="text-center mt-4">
+          <img src={logoViva} className="img-fluid tamanhoImagem" alt="Vite logo" />
+          </div>
           <div className="card-body p-4">
-            <h1 className="h4 mb-1 text-center">Viva Estética Segura</h1>
-            <p className="text-muted mb-4 text-center">Faça o login para continuar</p>
+            <h1 className="h4 mb-1 text-center mt-1">Bem Vindo(a)</h1>
+            <p className="text-muted text-center">Faça o login para continuar</p>
 
             <LoginForm onSubmit={handleLogin} />
 
