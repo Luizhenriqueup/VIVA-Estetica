@@ -9,8 +9,7 @@ const { notFoundHandler, errorHandler } = require('./middlewares/error.middlewar
 const app = express();
 
 app.use(cors({ origin: env.corsOrigin, credentials: true }));
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 
 app.use('/api', routes);

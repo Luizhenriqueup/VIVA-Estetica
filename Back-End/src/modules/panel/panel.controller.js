@@ -2,12 +2,9 @@ const asyncHandler = require('../../utils/asyncHandler');
 const { ok } = require('../../utils/response');
 const service = require('./panel.service');
 
-const getPanel = asyncHandler(async (req, res) => ok(res, await service.getPanel(req.auth)));
+const getPainel = asyncHandler(async (req, res) => ok(res, await service.getPainel(req.auth)));
 
-const switchRole = asyncHandler(async (req, res) =>
-  ok(res, await service.switchRole(req.auth, req.body.role)));
+const trocarPerfil = asyncHandler(async (req, res) =>
+  ok(res, await service.trocarPerfil(req.auth, req.body.perfil)));
 
-const listRoles = asyncHandler(async (req, res) =>
-  ok(res, service.listSwappableRoles(req.auth)));
-
-module.exports = { getPanel, switchRole, listRoles };
+module.exports = { getPainel, trocarPerfil };
