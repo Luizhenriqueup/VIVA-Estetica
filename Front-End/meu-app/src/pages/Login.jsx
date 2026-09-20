@@ -1,6 +1,7 @@
 import LoginForm from "../components/Login/LoginForm";
 import '../styles/Login.css'
 import logoViva from '../assets/viva-estetica.png'
+import { Link } from "react-router-dom";
 
 function Login() {
   function handleLogin(dados) {
@@ -24,8 +25,15 @@ function Login() {
             <p className="text-center mb-0 mt-4 small">
               Não tem conta? <a href="/cadastro">Criar conta</a>
             </p>
+
+            <div className="text-center">
+              <Link to="/painel" className="btn btn-dark mt-3">
+                Navegador temporario
+              </Link>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import SeletorPerfil from "./SeletorPerfil";
 import logoViva from '../../assets/logoSinabar.png'
 import '../../styles/Painel.css'
+import { Link } from "react-router-dom";
 
 const ATALHOS = [
   { id: "relatorios", nome: "Relatórios", icone: "bi-bar-chart" },
@@ -45,7 +46,9 @@ function Sidebar({
 
       <a href="/">
         <div className="text-center m-3">
-          <img src={logoViva} className="img-fluid my-2 tamanhoImagem" alt="Vite logo" />
+          <Link to="/painel" className="">
+            <img src={logoViva} className="img-fluid my-2 tamanhoImagem" alt="Vite logo" />
+          </Link>
         </div>
       </a>
 
@@ -60,7 +63,7 @@ function Sidebar({
       <hr className="text-secondary" />
 
       <ul className="nav nav-pills flex-column gap-1 mb-auto"
-      style={{ "--bs-nav-pills-link-active-bg": "#5f8a61" }}>
+      style={{ "--bs-nav-pills-link-active-bg": "rgb(95, 138, 97)" }}>
         {ATALHOS.map((atalho) => (
           <li key={atalho.id} className="nav-item">
             <button
@@ -68,7 +71,7 @@ function Sidebar({
               className={
                 
                 "nav-link text-start w-100 " +
-                (atalhoAtivo === atalho.id ? "active" : "text-white")
+                (atalhoAtivo === atalho.id ? "active" : "text-white item-sidebar-proprio")
 
 
 
@@ -84,9 +87,9 @@ function Sidebar({
 
       <hr className="text-secondary" />
 
-      <button type="button" className="btn btn-outline-light btn-sm">
-        Sair
-      </button>
+      <Link to="/" className="btnM btn-outline-verde">
+          Sair     
+      </Link>
     </aside>
   );
 }

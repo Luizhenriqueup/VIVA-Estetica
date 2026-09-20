@@ -3,6 +3,7 @@ import Sidebar from "../components/Painel/Sidebar";
 import logoViva from '../assets/viva-estetica.png';
 import '../styles/Painel.css'
 
+
 // MOCK: trocar pelos dados do usuário logado vindos do back end.
 // Para testar o caso "só funcionário", deixe apenas ["FUNCIONARIO"].
 const usuarioMock = {
@@ -58,7 +59,7 @@ function Painel() {
           <p className="subtitulo text-muted">Escolha uma opção para continuar</p>
         </div>
 
-        <div className="d-flex flex-column flex-lg-row gap-4 justify-content-center align-items-center">
+        <div className="d-flex flex-column flex-xl-row gap-4 gap-xl-5 justify-content-center align-items-center">
           <button className="card-acao">
             <i className="bi bi-bar-chart-fill card-acao__icone" aria-hidden="true" />
             <span className="card-acao__texto">Relatórios</span>

@@ -23,11 +23,26 @@
     background-color: rgb(52, 78, 62);
     border-color: rgb(52, 78, 62);
 }
+.btn-outline-verde {
+    color: #fff;
+    background-color: rgb(52, 78, 62);
+    border-color: rgb(255, 255, 255);
+}
 .btn-verde:hover {
     color: #fff;
     background-color: hsl(123, 18%, 46%);
     border-color: hsl(123, 18%, 46%);
     transition: 0.2s;
+}
+.btn-outline-verde:hover {
+    color: #fff;
+    background-color: hsl(123, 18%, 46%);
+    border-color: hsl(123, 18%, 46%);
+    transition: 0.2s;
+}
+
+.item-sidebar-proprio:hover{
+    background-color: hsla(123, 19%, 41%, 0.226);
 }
 
 
@@ -55,7 +70,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  width: 220px;
+  width: 250px;
   padding: 2rem 1.5rem;
   background-color: rgb(52, 78, 62);
   border: 1px solid #e3e6e3;

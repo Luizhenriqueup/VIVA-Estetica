@@ -4,12 +4,11 @@ import InputField from "../login/InputField";
 function LoginForm({ onSubmit }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [lembrar, setLembrar] = useState(false);
 
   function handleSubmit(event) {
     event.preventDefault();
     if (onSubmit) {
-      onSubmit({ email, senha, lembrar });
+      onSubmit({ email, senha,});
     }
   }
 
