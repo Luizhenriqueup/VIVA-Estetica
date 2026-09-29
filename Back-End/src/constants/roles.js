@@ -1,7 +1,0 @@
-const ROLES = {
-  FUNCIONARIO: 'FUNCIONARIO',
-  GERENTE: 'GERENTE',
-  ADMINISTRADOR: 'ADMINISTRADOR',
-};
-
-module.exports = { ROLES };
