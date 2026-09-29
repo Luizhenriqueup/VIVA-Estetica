@@ -5,9 +5,10 @@ import env from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import authRoutes from './routes/authRoutes.js';
-import reportRoutes from './routes/reportRoutes.js';
-import alertRoutes from './routes/alertRoutes.js';
+import authRoutes from './src/routers/authRoutes.js';
+import reportRoutes from './src/routers/reportRoutes.js';
+import alertRoutes from './src/routers/alertRoutes.js';
+import errorMiddleware from './src/middleware/errorMiddleware.js';
 
 // Setup Env
 env.config();
@@ -34,9 +35,11 @@ app.use('/reports', reportRoutes);
 app.use('/alerts', alertRoutes);
 
 // Qualquer outra rota que não seja da API carrega a página do React
-app.get('*', (req, res) => {
+app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
