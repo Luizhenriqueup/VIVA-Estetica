@@ -1,97 +1,29 @@
-import SeletorPerfil from "./SeletorPerfil";
-import logoViva from '../../assets/logoSinabar.png'
-import '../../styles/Painel.css'
-import { Link } from "react-router-dom";
-
+import { NavLink } from 'react-router-dom';
+import SeletorPerfil from './SeletorPerfil';
+import logoViva from '../../assets/logoSinabar.png';
 const ATALHOS = [
-  { id: "relatorios", nome: "Relatórios", icone: "bi-bar-chart" },
-  { id: "pops", nome: "POPs", icone: "bi-journal-text" },
-  { id: "conteudo", nome: "Conteúdo educativo", icone: "bi-mortarboard" },
+  { id: 'painel', nome: 'Painel', icone: 'bi-grid' },
+  { id: 'relatorios', nome: 'Relatórios', icone: 'bi-bar-chart' },
+  { id: 'checklists', nome: 'Checklists feitos', icone: 'bi-check2-square' },
+  { id: 'alertas', nome: 'Alertas', icone: 'bi-bell' },
+  { id: 'pops', nome: 'POPs', icone: 'bi-journal-text' },
+  { id: 'conteudo', nome: 'Conteúdo educativo', icone: 'bi-mortarboard' },
 ];
-
-/**
- * props:
- * - perfilAtual, perfisPermitidos, onTrocarPerfil -> repassados ao seletor
- * - atalhoAtivo: id do atalho selecionado
- * - onAtalho: callback(id) ao clicar num atalho
- */
-function Sidebar({
-  perfilAtual,
-  perfisPermitidos,
-  onTrocarPerfil,
-  atalhoAtivo,
-  onAtalho,
-  nomePerfil,
-  aberta,
-  onFechar,
-}) {
-  return (
-    <aside
-      className={
-        "sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-verde vh-100" +
-        (aberta ? " sidebar--aberta" : "")
-      }
-      style={{ width: "260px" }}
-    >
-
-      <button
-        type="button"
-        className="btn-fechar-sidebar d-md-none"
-        onClick={onFechar}
-        aria-label="Fechar menu"
-        >
-        <i className="bi bi-x-lg" />
-      </button>
-
-
-      <a href="/">
-        <div className="text-center m-3">
-          <Link to="/painel" className="">
-            <img src={logoViva} className="img-fluid my-2 tamanhoImagem" alt="Vite logo" />
-          </Link>
-        </div>
-      </a>
-
-      <div className="text-center mb-3">{nomePerfil}</div>
-
-      <SeletorPerfil
-        perfilAtual={perfilAtual}
-        perfisPermitidos={perfisPermitidos}
-        onTrocarPerfil={onTrocarPerfil}
-      />
-
-      <hr className="text-secondary" />
-
-      <ul className="nav nav-pills flex-column gap-1 mb-auto"
-      style={{ "--bs-nav-pills-link-active-bg": "rgb(95, 138, 97)" }}>
-        {ATALHOS.map((atalho) => (
-          <li key={atalho.id} className="nav-item">
-            <button
-              type="button"
-              className={
-                
-                "nav-link text-start w-100 " +
-                (atalhoAtivo === atalho.id ? "active" : "text-white item-sidebar-proprio")
-
-
-
-              }
-              onClick={() => onAtalho(atalho.id)}
-            >
-              <i className={`bi ${atalho.icone} me-2`} aria-hidden="true" />
-              {atalho.nome}
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <hr className="text-secondary" />
-
-      <Link to="/" className="btnM btn-outline-verde">
-          Sair     
-      </Link>
-    </aside>
-  );
+export default function Sidebar({ onFechar, onLogout, pending }) {
+  return <>
+    <div className="text-center my-3"><NavLink to="/painel" onClick={onFechar}>
+      <img src={logoViva} className="img-fluid tamanhoImagem" alt="Viva Estética Segura" />
+    </NavLink></div>
+    <SeletorPerfil />
+    <hr />
+    <nav aria-label="Navegação principal" className="nav nav-pills flex-column gap-1 mb-auto">
+      {ATALHOS.map((item) => <NavLink key={item.id} to={'/' + item.id} onClick={onFechar}
+        className={({ isActive }) => 'nav-link text-white ' + (isActive ? 'active' : 'item-sidebar-proprio')}>
+        <i className={'bi ' + item.icone + ' me-2'} aria-hidden="true" />{item.nome}
+      </NavLink>)}
+    </nav>
+    <hr />
+    <NavLink to="/ativar-conta" onClick={onFechar} className="small text-white mb-3">Ativar conta temporária</NavLink>
+    <button className="btnM btn-outline-verde" disabled={pending} onClick={onLogout}>{pending ? 'Saindo…' : 'Sair'}</button>
+  </>;
 }
-
-export default Sidebar;

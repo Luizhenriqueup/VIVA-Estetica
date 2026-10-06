@@ -1,60 +1,22 @@
-import { useState } from "react";
-import InputField from "../login/InputField";
-
-function LoginForm({ onSubmit }) {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-
+import { useState } from 'react';
+import InputField from './InputField';
+function LoginForm({ onSubmit, pending }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   function handleSubmit(event) {
     event.preventDefault();
-    if (onSubmit) {
-      onSubmit({ email, senha,});
-    }
+    if (pending) return;
+    if (!username.trim() || !password.trim()) { setError('Informe usuário e senha.'); return; }
+    setError(''); onSubmit({ username: username.trim(), password });
   }
-
-  return (
-    <form onSubmit={handleSubmit} noValidate>
-      <InputField
-        id="email"
-        label="E-mail"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="voce@exemplo.com"
-        autoComplete="email"
-      />
-
-      <InputField
-        id="senha"
-        label="Senha"
-        type="password"
-        value={senha}
-        onChange={(e) => setSenha(e.target.value)}
-        placeholder="••••••••"
-        autoComplete="current-password"
-      />
-
-      {/* CONTINUAR CONECTADO
-      
-      <div className="form-check mb-3">
-        <input
-          id="lembrar"
-          type="checkbox"
-          className="form-check-input"
-          checked={lembrar}
-          onChange={(e) => setLembrar(e.target.checked)}
-        />
-        <label htmlFor="lembrar" className="form-check-label">
-          Continuar conectado
-        </label>
-      </div>
-      */}
-
-      <button type="submit" className="btn btn-dark w-100">
-        Entrar
-      </button>
-    </form>
-  );
+  return <form onSubmit={handleSubmit} aria-busy={pending}>
+    <fieldset disabled={pending}>
+      <InputField id="username" label="Usuário" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
+      <InputField id="password" label="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+      {error && <p className="text-danger" role="alert">{error}</p>}
+      <button type="submit" className="btn btn-dark w-100">{pending ? 'Entrando…' : 'Entrar'}</button>
+    </fieldset>
+  </form>;
 }
-
 export default LoginForm;

@@ -148,3 +148,34 @@
     transform: translateX(0);
   }
 }
+/* Layout integrado: mantém a paleta e os cards existentes. */
+body { background: #f5f7f5; }
+.app-layout { display: flex; min-height: 100dvh; }
+.app-content { flex: 1; min-width: 0; }
+.app-header { background: white; border-bottom: 1px solid #e3e6e3; color: #1b3b2f; }
+.app-header .badge { white-space: normal; }
+.sidebar { --bs-offcanvas-width: 260px; --bs-offcanvas-bg: rgb(52, 78, 62); width: 260px; flex-shrink: 0; }
+.sidebar.offcanvas-md { background-color: rgb(52, 78, 62) !important; }
+.sidebar .offcanvas-body { min-height: 100%; overflow-y: auto; }
+.sidebar .nav { --bs-nav-pills-link-active-bg: rgb(95, 138, 97); }
+.preserve-lines { white-space: pre-wrap; overflow-wrap: anywhere; }
+.alert-excerpt { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.titulo-painel { overflow-wrap: anywhere; }
+.table th, .table td { padding: 1rem; }
+.skip-link:focus { position: fixed; top: 0; left: 0; z-index: 2000; padding: 1rem; background: white; }
+#conteudo-principal:focus { outline: none; }
+@media (min-width: 768px) {
+  .sidebar { position: sticky; top: 0; height: 100dvh; align-self: flex-start; }
+  .sidebar .offcanvas-body { height: 100dvh; }
+}
+@media (max-width: 767.98px) {
+  .sidebar.offcanvas-md { z-index: 1045; }
+  .sidebar.offcanvas-md.show, .sidebar.offcanvas-md.showing { transform: none; }
+  .sidebar .offcanvas-body { min-height: 0; }
+  .titulo-painel { font-size: 1.6rem; }
+  .card-acao { padding: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-acao, .sidebar { transition: none; }
+  .card-acao:hover { transform: none; }
+}
