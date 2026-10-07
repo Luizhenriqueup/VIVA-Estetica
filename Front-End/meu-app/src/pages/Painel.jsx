@@ -22,11 +22,13 @@ export default function Painel() {
       <Metric title="Checklists de alto risco" unavailable description="Classificação de risco ainda não disponível." />
       <Metric title="Alertas registrados" resource={alerts} description="Avisos da equipe. Indicador de leitura ainda não disponível." />
     </div>
+    {/*}
     <div className="row g-3">
       {[['relatorios', 'Relatórios', 'bi-bar-chart-fill'], ['pops', 'POPs', 'bi-journal-text'], ['conteudo', 'Conteúdo educativo', 'bi-mortarboard-fill']].map(([id, label, icon]) =>
         <div className="col-12 col-lg-4" key={id}><Link to={'/' + id} className="card-acao w-100 h-100 text-decoration-none">
           <i className={'bi ' + icon + ' card-acao__icone'} aria-hidden="true" /><span className="card-acao__texto">{label}</span>
         </Link></div>)}
     </div>
+    {*/}
   </>;
 }

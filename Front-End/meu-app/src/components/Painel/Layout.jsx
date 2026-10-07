@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import { useAuth } from '../../contexts/auth';
 import '../../styles/Painel.css';
 export default function Layout() {
-  const { logout } = useAuth();
+  const { logout, session } = useAuth();
   const [pending, setPending] = useState(false);
   const menu = useRef(null);
   const instance = useRef(null);
@@ -32,7 +32,6 @@ export default function Layout() {
       <header className="app-header d-flex align-items-center gap-3 px-3 px-md-4 py-3">
         <button type="button" className="btn btn-outline-success d-md-none" aria-label="Abrir menu" aria-controls="menu-principal" onClick={() => instance.current?.show()}><i className="bi bi-list" /></button>
         <span className="fw-semibold">Viva Estética Segura</span>
-        <span className="badge text-bg-light ms-auto">Área de trabalho</span>
       </header>
       <main id="conteudo-principal" ref={heading} tabIndex="-1" className="container-fluid p-3 p-md-4 p-xl-5"><Outlet /></main>
     </div>

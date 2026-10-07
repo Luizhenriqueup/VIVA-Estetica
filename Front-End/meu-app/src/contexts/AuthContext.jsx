@@ -25,7 +25,9 @@ export function AuthProvider({ children }) {
   }, [session, endSession]);
   async function login(credentials) {
     const result = await api.login(credentials);
-    const saved = saveSession(result);
+    // A successful login confirms the supplied identifier even when this API
+    // response only returns userId, token, and expiresAt.
+    const saved = saveSession({ ...result, username: result.username ?? credentials.username });
     setSession(saved); setNotice('');
   }
   async function logout() {

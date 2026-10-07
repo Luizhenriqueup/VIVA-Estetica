@@ -79,3 +79,18 @@ test('armazenamento bloqueado não permite falsa persistência', () => {
   assert.throws(() => saveSession(session(), storage), /guardar a sessão/);
   assert.doesNotThrow(() => clearSession(storage));
 });
+test('a sessão exibe o nome aceito no login e só marca temporário quando o backend confirma', () => {
+  const values = new Map();
+  const storage = { getItem: (key) => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: (key) => values.delete(key) };
+  const value = session();
+  const regular = saveSession({ ...value, username: ' Bruno ', isTemp: false }, storage);
+  assert.deepEqual(regular, { ...value, username: 'Bruno', isTemp: false });
+  assert.deepEqual(readSession(storage), regular);
+  const temporary = saveSession({ ...value, username: '12345678', isTemp: true }, storage);
+  assert.equal(temporary.isTemp, true);
+  assert.equal(temporary.username, '12345678');
+  const legacy = saveSession(value, storage);
+  assert.equal(legacy.username, undefined);
+  assert.equal(legacy.isTemp, undefined);
+  assert.throws(() => saveSession({ ...value, username: {}, isTemp: 'true' }, storage), /Resposta de autenticação inválida/);
+});
