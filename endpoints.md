@@ -116,7 +116,7 @@ Todos os endpoints exigem um token de conta permanente com pelo menos uma das fl
 
 | Método e caminho | O que faz |
 |---|---|
-| `POST /reports` | Cria um relatório para o usuário autenticado com as respostas do questionário. |
+| `POST /reports` | Cria um relatório para o usuário autenticado com nome e respostas do questionário. |
 | `GET /reports` | Lista somente os relatórios do usuário autenticado. |
 | `GET /reports/:id` | Consulta um relatório pertencente ao usuário autenticado. |
 | `DELETE /reports/:id` | Exclui um relatório pertencente ao usuário autenticado. |
@@ -126,7 +126,7 @@ Todos os endpoints exigem um token de conta permanente com pelo menos uma das fl
 Requisição:
 
 ```json
-{ "questionnaire": [2, 0, 1] }
+{ "nome": "Avaliação inicial", "questionnaire": [2, 0, 1] }
 ```
 
 Resposta `201`:
@@ -135,11 +135,12 @@ Resposta `201`:
 {
   "id": "cm...",
   "userId": "cm...",
+  "nome": "Avaliação inicial",
   "questionnaire": [2, 0, 1]
 }
 ```
 
-Erros: `400` se `questionnaire` estiver ausente ou não for um array de inteiros não negativos; `401` para autenticação inválida/ausente; `403` para conta temporária ou usuário sem flag autorizada.
+Erros: `400` se `nome` estiver ausente, vazio ou não for uma string, ou se `questionnaire` estiver ausente ou não for um array de inteiros não negativos; `401` para autenticação inválida/ausente; `403` para conta temporária ou usuário sem flag autorizada.
 
 ### `GET /reports`
 
@@ -150,12 +151,13 @@ Resposta `200`:
   {
     "id": "cm...",
     "userId": "cm...",
+    "nome": "Avaliação inicial",
     "questionnaire": [2, 0, 1]
   }
 ]
 ```
 
-Relatórios criados antes da migração são preservados e retornam `questionnaire: []`. Erros: `401` para autenticação inválida/ausente; `403` para conta temporária ou usuário sem flag autorizada.
+Relatórios existentes são preservados e retornam `nome: ""` caso tenham sido criados antes da inclusão desse campo. Erros: `401` para autenticação inválida/ausente; `403` para conta temporária ou usuário sem flag autorizada.
 
 ### `GET /reports/:id`
 

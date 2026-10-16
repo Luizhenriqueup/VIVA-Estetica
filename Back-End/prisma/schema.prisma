@@ -51,6 +51,7 @@ model AuthToken {
 model Report {
   id            String @id @default(cuid())
   userId        String
+  nome          String @default("")
   questionnaire Json   @default("[]") @db.JsonB
   user          User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 

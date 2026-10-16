@@ -14,7 +14,13 @@ async function getByIdAction(req, res) {
 }
 
 async function createAction(req, res) {
-  const { questionnaire } = req.body ?? {};
+  const { nome, questionnaire } = req.body ?? {};
+  if (typeof nome !== "string" || nome.trim().length === 0) {
+    return res.status(400).json({
+      message: "O campo nome deve ser uma string não vazia.",
+    });
+  }
+
   if (
     !Array.isArray(questionnaire) ||
     questionnaire.some((answer) => !Number.isSafeInteger(answer) || answer < 0)
@@ -24,7 +30,7 @@ async function createAction(req, res) {
     });
   }
 
-  const report = await reportService.create(req.auth.userId, questionnaire);
+  const report = await reportService.create(req.auth.userId, nome.trim(), questionnaire);
   res.status(201).json(report);
 }
 
