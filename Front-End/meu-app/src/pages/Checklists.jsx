@@ -18,9 +18,8 @@ export default function Checklists() {
       <div className="row g-3">{reports.map((report) => <div className="col-12 col-lg-6" key={report.id}>
         <article className="card h-100 border-0 shadow-sm"><div className="card-body p-4">
           <h2 className="h5">Checklist de segurança</h2>
-          <p className="text-break"><strong>Paciente:</strong> {typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}</p>
+          <p className="text-break mt-4"><strong>Paciente:</strong> {typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}</p>
           <p className="text-muted">21 respostas · 4 etapas</p>
-          <p className="small text-break">Identificador: {report.id}</p>
           <Link to={'/checklists/' + encodeURIComponent(report.id)} className="btn btn-outline-success" aria-label={'Ver respostas do checklist ' + report.id}>Ver respostas</Link>
         </div></article>
       </div>)}</div>}

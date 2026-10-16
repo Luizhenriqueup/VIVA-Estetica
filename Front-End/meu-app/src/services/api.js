@@ -41,6 +41,13 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
   return {
     login: (credentials) => request('/auth/login', { method: 'POST', body: credentials, authenticated: false }),
     logout: () => request('/auth/logout', { method: 'POST' }),
+    createTemporaryUser: async () => {
+      const result = await request('/auth/register/tempLogin', { method: 'POST' });
+      if (!result || ['userId', 'username', 'password'].some((key) => typeof result[key] !== 'string' || !result[key].trim())) {
+        throw new ApiError('O servidor não retornou as credenciais completas. O acesso pode ter sido criado; consulte o responsável antes de gerar outro.');
+      }
+      return { userId: result.userId, username: result.username, password: result.password };
+    },
     activate: (credentials) => request('/auth/register', { method: 'POST', body: credentials }),
     reports: (signal) => list('/reports', signal),
     report: (id, signal) => request(`/reports/${encodeURIComponent(id)}`, { signal }),

@@ -13,6 +13,7 @@ import AlertaDetalhe from './pages/AlertaDetalhe';
 import POPs from './pages/POPs';
 import Conteudo from './pages/Conteudo';
 import AtivarConta from './pages/AtivarConta';
+import UsuariosTemporarios from './pages/UsuariosTemporarios';
 export default function App() {
   return <BrowserRouter><AuthProvider><Routes>
     <Route path="/" element={<Login />} />
@@ -27,6 +28,7 @@ export default function App() {
       <Route path="/pops" element={<POPs />} />
       <Route path="/conteudo" element={<Conteudo />} />
       <Route path="/ativar-conta" element={<AtivarConta />} />
+      <Route path="/usuarios-temporarios" element={<UsuariosTemporarios />} />
     </Route></Route>
     <Route path="*" element={<main className="container py-5"><h1 className="h3">Página não encontrada</h1><Link to="/painel">Voltar ao sistema</Link></main>} />
   </Routes></AuthProvider></BrowserRouter>;

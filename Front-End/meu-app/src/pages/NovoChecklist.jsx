@@ -130,10 +130,12 @@ export default function NovoChecklist() {
       </div>
       <div role="status" aria-live="polite">{notice && <p className="alert alert-success">{notice}</p>}</div>
       <section className="card border-0 shadow-sm"><div className="card-body p-4 p-lg-5">
-        <p className="text-success fw-semibold mb-1">{stage.name} — {stage.subtitle}</p>
+        <div className="d-flex justify-content-between align-items-baseline flex-wrap gap-2 mb-1">
+          <p className="text-success fw-semibold mb-0">{stage.name} — {stage.subtitle}</p>
+          {question.critical && <p className="small text-danger mb-0"><i className="bi bi-exclamation-triangle me-1" aria-hidden="true" />Item crítico de segurança</p>}
+        </div>
         <p className="small text-muted">Pergunta {question.questionIndex + 1} de {stage.questions.length}</p>
         <h2 className="h4 mb-3 checklist-question" ref={questionHeading} tabIndex="-1">{question.text}</h2>
-        {question.critical && <p className="checklist-critical"><i className="bi bi-exclamation-triangle me-2" aria-hidden="true" />Atenção: item crítico de segurança.</p>}
         {error && <>
           <ErrorState error={error} />
           {(!error.status || error.status >= 500) && <p className="small">Se o envio foi interrompido, <Link to="/checklists" target="_blank" rel="noopener noreferrer">consulte o histórico em outra aba</Link> antes de tentar novamente. O registro pode ter sido salvo.</p>}

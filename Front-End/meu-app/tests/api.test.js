@@ -5,6 +5,35 @@ import { ANSWERS, QUESTIONS, STAGES, isCompleteQuestionnaire } from '../src/data
 import { isValidSession, readSession, saveSession, clearSession } from '../src/services/session.js';
 const session = () => ({ userId: 'user-1', token: 'opaque-._~token', expiresAt: new Date(Date.now() + 60000).toISOString() });
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
+test('acesso temporário usa POST autenticado sem inventar campos ou alterar sessão', async () => {
+  const saved = session(); const before = { ...saved }; const calls = [];
+  const credentials = { userId: 'temp-1', username: 'temporary', password: 'generated-secret' };
+  const api = createApi({ getSession: () => saved, fetcher: async (...args) => { calls.push(args); return json(credentials, 201); } });
+  assert.deepEqual(await api.createTemporaryUser(), credentials);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0][0], '/auth/register/tempLogin');
+  assert.equal(calls[0][1].method, 'POST');
+  assert.equal(calls[0][1].body, undefined);
+  assert.equal(calls[0][1].headers.Authorization, 'Bearer ' + saved.token);
+  assert.deepEqual(saved, before);
+});
+
+test('acesso temporário trata 401, 403 e 500 sem repetir criação', async () => {
+  for (const status of [401, 403, 500]) {
+    let calls = 0; let expired = 0;
+    const api = createApi({ getSession: session, onUnauthorized: () => expired++, fetcher: async () => { calls++; return json({ message: 'Operação recusada' }, status); } });
+    await assert.rejects(api.createTemporaryUser(), { status, message: 'Operação recusada' });
+    assert.equal(calls, 1);
+    assert.equal(expired, status === 401 ? 1 : 0);
+  }
+});
+
+test('acesso temporário rejeita credenciais incompletas sem expor senha no erro', async () => {
+  for (const result of [{}, { userId: 't', username: 'u', password: '' }, { userId: 't', password: 'secret' }]) {
+    const api = createApi({ getSession: session, fetcher: async () => json(result, 201) });
+    await assert.rejects(api.createTemporaryUser(), /não retornou as credenciais completas/);
+  }
+});
 test('checklist mantém o contrato de 21 respostas e seis itens críticos', () => {
   assert.deepEqual(ANSWERS, ['Adequado', 'Parcial', 'Inadequado']);
   assert.deepEqual(STAGES.map((stage) => stage.questions.length), [8, 6, 5, 2]);
