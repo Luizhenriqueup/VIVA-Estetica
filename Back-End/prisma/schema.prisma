@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserFlag {
+  Admin
+  Gerente
+  Funcionario
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  title     String
+  message   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  userId    String      @id @default(cuid())
+  username  String      @unique
+  hash      String
+  salt      String
+  isTemp    Boolean     @default(true)
+  flags     UserFlag[]  @default([Funcionario])
+  tokens    AuthToken[]
+  reports   Report[]
+}
+
+model AuthToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Report {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId])
+}
