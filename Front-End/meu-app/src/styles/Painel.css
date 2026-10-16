@@ -155,7 +155,7 @@ body { background: #f5f7f5; }
 .app-header { background: white; border-bottom: 1px solid #e3e6e3; color: #1b3b2f; }
 .app-header .badge { white-space: normal; }
 .sidebar { --bs-offcanvas-width: 260px; --bs-offcanvas-bg: rgb(52, 78, 62); width: 260px; flex-shrink: 0; }
-.sidebar.offcanvas-md { background-color: rgb(52, 78, 62) !important; }
+.sidebar.offcanvas-md { background-color: rgb(52, 83, 65) !important; }
 .sidebar .offcanvas-body { min-height: 100%; overflow-y: auto; }
 .sidebar .nav { --bs-nav-pills-link-active-bg: rgb(95, 138, 97); }
 .preserve-lines { white-space: pre-wrap; overflow-wrap: anywhere; }

@@ -51,8 +51,8 @@ export default function Relatorios() {
           aria-pressed={type === 'alerta'} onClick={() => chooseType('alerta')}>
           <span className="card-body d-flex flex-column align-items-start p-4 p-lg-5">
             <span className="report-choice__icon report-choice__icon--alert mb-3" aria-hidden="true"><i className="bi bi-bell" /></span>
-            <span className="h4 report-choice__title mb-2">Criar Alerta</span>
-            <span className="text-muted">Registre um aviso ou situação que precisa ser comunicada aos responsáveis.</span>
+            <span className="h4 report-choice__title mb-2">Criar Notificação de evento adverso</span>
+            <span className="text-muted">Registre uma Notificação de evento adverso que precisa ser comunicada aos responsáveis.</span>
             <span className="btn btn-outline-success mt-4">Acessar alertas</span>
           </span>
         </button>
@@ -68,12 +68,12 @@ export default function Relatorios() {
       <button className="btn btn-verde" disabled>Finalizar checklist</button>
       <Link to="/checklists" className="btn btn-link text-success">Ver registros disponíveis</Link>
     </> : <>
-      <h2 id="report-form-title" className="h4 mb-5" tabIndex="-1">Novo alerta</h2>
+      <h2 id="report-form-title" className="h4 mb-5" tabIndex="-1">Nova Notificação de evento adverso</h2>
       {error && <ErrorState error={error} />}
       <form onSubmit={submit} aria-busy={pending}><fieldset disabled={pending}>
-        <label htmlFor="titulo" className="form-label">Título do alerta</label>
+        <label htmlFor="titulo" className="form-label">Título da notificação</label>
         <input id="titulo" className="form-control mb-3" value={title} onChange={(event) => setTitle(event.target.value)} required />
-        <label htmlFor="descricao" className="form-label">Descrição do alerta</label>
+        <label htmlFor="descricao" className="form-label">Descrição da notificação</label>
         <textarea id="descricao" className="form-control mb-3" rows="5" value={message} onChange={(event) => setMessage(event.target.value)} required />
         <button className="btn btn-verde" type="submit">{pending ? 'Enviando…' : 'Publicar alerta'}</button>
       </fieldset></form>
