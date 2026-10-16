@@ -3,21 +3,21 @@ import { prisma } from "../lib/prisma.js";
 async function getAllForUser(userId) {
   return prisma.report.findMany({
     where: { userId },
-    select: { id: true, userId: true },
+    select: { id: true, userId: true, questionnaire: true },
   });
 }
 
 async function getByIdForUser(id, userId) {
   return prisma.report.findFirst({
     where: { id, userId },
-    select: { id: true, userId: true },
+    select: { id: true, userId: true, questionnaire: true },
   });
 }
 
-async function create(userId) {
+async function create(userId, questionnaire) {
   return prisma.report.create({
-    data: { userId },
-    select: { id: true, userId: true },
+    data: { userId, questionnaire },
+    select: { id: true, userId: true, questionnaire: true },
   });
 }
 

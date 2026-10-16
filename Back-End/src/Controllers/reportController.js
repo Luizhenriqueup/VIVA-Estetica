@@ -14,7 +14,17 @@ async function getByIdAction(req, res) {
 }
 
 async function createAction(req, res) {
-  const report = await reportService.create(req.auth.userId);
+  const { questionnaire } = req.body ?? {};
+  if (
+    !Array.isArray(questionnaire) ||
+    questionnaire.some((answer) => !Number.isSafeInteger(answer) || answer < 0)
+  ) {
+    return res.status(400).json({
+      message: "O campo questionnaire deve ser um array de inteiros não negativos.",
+    });
+  }
+
+  const report = await reportService.create(req.auth.userId, questionnaire);
   res.status(201).json(report);
 }
 

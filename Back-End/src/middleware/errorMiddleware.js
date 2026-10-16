@@ -3,6 +3,9 @@ export default function errorMiddleware(error, req, res, next) {
     return next(error);
   }
 
+  if (error.type === "entity.parse.failed") {
+    return res.status(400).json({ message: "O corpo JSON é inválido." });
+  }
   if (error.code === "P2025") {
     return res.status(404).json({ message: "Registro não encontrado." });
   }
