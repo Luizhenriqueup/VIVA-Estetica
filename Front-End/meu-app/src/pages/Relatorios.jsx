@@ -41,7 +41,7 @@ export default function Relatorios() {
             <span className="report-choice__icon mb-3" aria-hidden="true"><i className="bi bi-card-checklist" /></span>
             <span className="h4 report-choice__title mb-2">Fazer Checklist</span>
             <span className="text-muted">Responda aos 21 itens de segurança nas quatro etapas do checklist.</span>
-            <span className="btn btn-verde mt-4">Acessar checklist</span>
+            <span className="btn btn-verde mt-4">Criar checklist</span>
           </span>
         </button>
       </div>
@@ -52,7 +52,7 @@ export default function Relatorios() {
             <span className="report-choice__icon report-choice__icon--alert mb-3" aria-hidden="true"><i className="bi bi-bell" /></span>
             <span className="h4 report-choice__title mb-2">Criar Notificação de evento adverso</span>
             <span className="text-muted">Registre uma Notificação de evento adverso que precisa ser comunicada aos responsáveis.</span>
-            <span className="btn btn-outline-success mt-4">Acessar alertas</span>
+            <span className="btn btn-outline-success mt-4">Criar Notificação</span>
           </span>
         </button>
       </div>
