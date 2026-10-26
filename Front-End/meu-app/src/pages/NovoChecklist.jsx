@@ -41,11 +41,13 @@ export default function NovoChecklist() {
     setStarted(true);
   }
   function selectAnswer(value) {
+    if (!isAnswer(value) || pending) return;
     setAnswers((current) => current.map((answer, index) => index === position ? value : answer));
     setError(null);
+    if (position < QUESTIONS.length - 1) next(value);
   }
-  function next() {
-    if (!isAnswer(answers[position]) || pending) return;
+  function next(answer = answers[position]) {
+    if (!isAnswer(answer) || pending) return;
     if (question.questionIndex === stage.questions.length - 1) {
       //setNotice(`Etapa ${stage.name} concluída com sucesso!`);
       setCompletedStages((current) => [...new Set([...current, question.stageIndex])]);
