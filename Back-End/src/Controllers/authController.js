@@ -58,6 +58,15 @@ async function logoutAction(req, res) {
   res.status(204).end();
 }
 
+async function meAction(req, res) {
+  const user = await authService.getCurrentUser(req.auth.userId);
+  if (!user) {
+    return res.status(404).json({ message: "Usuário não encontrado." });
+  }
+
+  res.json(user);
+}
+
 async function deleteAction(req, res) {
   if (req.params.id !== req.auth.userId) {
     return res.status(403).json({ message: "Você só pode excluir sua própria conta." });
@@ -105,6 +114,7 @@ export default {
   registerTempLoginAction,
   registerAction,
   logoutAction,
+  meAction,
   deleteAction,
   setFlagsAction,
 };

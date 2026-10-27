@@ -106,6 +106,31 @@ async function findActiveToken(tokenHash) {
   });
 }
 
+async function getCurrentUser(userId) {
+  const user = await prisma.user.findUnique({
+    where: { userId },
+    select: {
+      userId: true,
+      username: true,
+      isTemp: true,
+      flags: true,
+      reports: { select: { id: true } },
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    userId: user.userId,
+    username: user.username,
+    isTemp: user.isTemp,
+    flags: user.flags,
+    reports: user.reports.map((report) => report.id),
+  };
+}
+
 async function logout(tokenHash) {
   const result = await prisma.authToken.deleteMany({
     where: { tokenHash },
@@ -164,6 +189,7 @@ export default {
   registerTemporaryUser,
   login,
   findActiveToken,
+  getCurrentUser,
   logout,
   deleteUser,
   setFlags,

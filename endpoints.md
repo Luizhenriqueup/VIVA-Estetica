@@ -27,6 +27,7 @@ Isso representa a terceira alternativa da primeira pergunta, a primeira alternat
 | Método e caminho | O que faz | Autenticação e permissões |
 |---|---|---|
 | `POST /auth/login` | Autentica usuário e senha e cria um token com validade de 12 horas. | Público |
+| `GET /auth/me` | Retorna os dados da conta autenticada e os IDs dos relatórios dela. | Token |
 | `POST /auth/register/tempLogin` | Cria uma conta temporária e retorna as credenciais para ela. | Token; `Admin` ou `Gerente`; conta temporária não autorizada |
 | `POST /auth/register` | Ativa a conta temporária autenticada, definindo usuário e senha permanentes. Tokens existentes dessa conta são revogados. | Token da conta temporária a ativar |
 | `POST /auth/logout` | Encerra a sessão do token enviado. | Token |
@@ -52,6 +53,24 @@ Resposta `200`:
 ```
 
 Erros: `400` se usuário ou senha estiver ausente/vazio; `401` se as credenciais forem inválidas.
+
+### `GET /auth/me`
+
+Sem corpo. Requer o token da conta no cabeçalho `Authorization`.
+
+Resposta `200`:
+
+```json
+{
+  "userId": "cm...",
+  "username": "ana",
+  "isTemp": false,
+  "flags": ["Funcionario"],
+  "reports": ["cm...", "cm..."]
+}
+```
+
+`reports` contém somente os IDs dos relatórios da conta autenticada. Erros: `401` para token ausente/inválido; `404` se a conta não existir.
 
 ### `POST /auth/register/tempLogin`
 
