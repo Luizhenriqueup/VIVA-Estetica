@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/auth';
 import { ErrorState, PageTitle } from '../components/Feedback';
 export default function Relatorios() {
   const { api } = useAuth();
   const navigate = useNavigate();
-  const [type, setType] = useState(null);
+  const location = useLocation();
+  const [type, setType] = useState(() => location.state?.createNotification ? 'alerta' : null);
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);

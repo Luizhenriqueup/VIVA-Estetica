@@ -1,4 +1,10 @@
 import { isCompleteQuestionnaire } from '../data/checklist.js';
+import { PERFIS } from '../constants/perfis.js';
+
+export function canDeleteRecords(user) {
+  return user?.isTemp === false && Array.isArray(user.flags) &&
+    user.flags.some((flag) => flag === PERFIS.Admin.id || flag === PERFIS.Gerente.id);
+}
 
 export class ApiError extends Error {
   constructor(message, status = 0) { super(message); this.name = 'ApiError'; this.status = status; }
@@ -38,8 +44,22 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     if (!Array.isArray(data)) throw new ApiError('A lista recebida do servidor é inválida.');
     return data;
   }
+  async function me(signal) {
+    const user = await request('/auth/me', { signal });
+    if (!user || user.userId !== getSession()?.userId || typeof user.isTemp !== 'boolean' ||
+        !Array.isArray(user.flags) || user.flags.some((flag) => typeof flag !== 'string')) {
+      throw new ApiError('Não foi possível confirmar as permissões do usuário.');
+    }
+    return user;
+  }
+  async function remove(path) {
+    // Consultar as permissões atuais antes de cada exclusão, sem usar flags locais.
+    if (!canDeleteRecords(await me())) throw new ApiError('Você não tem permissão para esta operação.', 403);
+    return request(path, { method: 'DELETE' });
+  }
   return {
     login: (credentials) => request('/auth/login', { method: 'POST', body: credentials, authenticated: false }),
+    me,
     logout: () => request('/auth/logout', { method: 'POST' }),
     createTemporaryUser: async () => {
       const result = await request('/auth/register/tempLogin', { method: 'POST' });
@@ -51,6 +71,7 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     activate: (credentials) => request('/auth/register', { method: 'POST', body: credentials }),
     reports: (signal) => list('/reports', signal),
     report: (id, signal) => request(`/reports/${encodeURIComponent(id)}`, { signal }),
+    deleteReport: (id) => remove(`/reports/${encodeURIComponent(id)}`),
     createReport: async ({ nome, questionnaire } = {}) => {
       if (typeof nome !== 'string' || !nome.trim()) throw new ApiError('Informe o nome do paciente.');
       const patientName = nome.trim();
@@ -66,6 +87,7 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     },
     alerts: (signal) => list('/alerts', signal),
     alert: (id, signal) => request(`/alerts/${encodeURIComponent(id)}`, { signal }),
+    deleteAlert: (id) => remove(`/alerts/${encodeURIComponent(id)}`),
     createAlert: ({ title, message }) => request('/alerts', { method: 'POST', body: { title: title.trim(), message: message.trim() } }),
   };
 }

@@ -1,10 +1,95 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createApi } from '../src/services/api.js';
+import { canDeleteRecords, createApi } from '../src/services/api.js';
 import { ANSWERS, QUESTIONS, STAGES, isCompleteQuestionnaire } from '../src/data/checklist.js';
 import { isValidSession, readSession, saveSession, clearSession } from '../src/services/session.js';
 const session = () => ({ userId: 'user-1', token: 'opaque-._~token', expiresAt: new Date(Date.now() + 60000).toISOString() });
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
+
+test('exclusão exige flags Admin ou Gerente e conta não temporária', () => {
+  for (const flags of [['Admin'], ['Gerente'], ['Funcionario', 'Gerente'], ['Admin', 'Gerente']]) {
+    assert.equal(canDeleteRecords({ flags, isTemp: false }), true);
+    assert.equal(canDeleteRecords({ flags, isTemp: true }), false);
+  }
+  for (const user of [null, {}, { flags: ['Admin'] }, { flags: 'Admin', isTemp: false },
+    { flags: ['Funcionario'], isTemp: false }, { flags: [], isTemp: false }, { flags: ['admin'], isTemp: false }]) {
+    assert.equal(canDeleteRecords(user), false);
+  }
+});
+
+test('consulta perfil autenticado em auth/me e rejeita identidade ou permissões inválidas', async () => {
+  const saved = session(); const calls = [];
+  let profile = { userId: saved.userId, username: 'gerente', isTemp: false, flags: ['Gerente'], reports: ['r1'] };
+  const api = createApi({ getSession: () => saved, fetcher: async (...args) => { calls.push(args); return json(profile); } });
+  assert.deepEqual(await api.me(), profile);
+  assert.equal(calls[0][0], '/auth/me');
+  assert.equal(calls[0][1].method, 'GET');
+  assert.equal(calls[0][1].headers.Authorization, 'Bearer ' + saved.token);
+  for (const invalid of [{}, { ...profile, userId: 'outro' }, { ...profile, flags: 'Admin' },
+    { ...profile, flags: [1] }, { ...profile, isTemp: undefined }]) {
+    profile = invalid;
+    await assert.rejects(api.me(), /confirmar as permissões/);
+  }
+});
+
+test('exclusões consultam flags atuais, enviam DELETE somente ao ID selecionado e aceitam as respostas reais', async () => {
+  for (const flag of ['Admin', 'Gerente']) {
+    const saved = session(); const calls = [];
+    const profile = { userId: saved.userId, isTemp: false, flags: [flag] };
+    const api = createApi({ getSession: () => saved, fetcher: async (url, options) => {
+      calls.push([url, options]);
+      if (url === '/auth/me') return json(profile);
+      return url.startsWith('/reports/') ? new Response(null, { status: 204 }) : json({ id: 'alerta/1' });
+    } });
+    assert.equal(await api.deleteReport('checklist/1'), null);
+    assert.deepEqual(await api.deleteAlert('alerta/1'), { id: 'alerta/1' });
+    assert.deepEqual(calls.map(([url, options]) => [url, options.method]), [
+      ['/auth/me', 'GET'], ['/reports/checklist%2F1', 'DELETE'], ['/auth/me', 'GET'], ['/alerts/alerta%2F1', 'DELETE'],
+    ]);
+    assert.ok(calls.every(([, options]) => options.headers.Authorization === 'Bearer ' + saved.token && options.body === undefined));
+  }
+});
+
+test('exclusões não confiam em flags locais e bloqueiam funcionário, conta temporária ou permissão revogada', async () => {
+  for (const method of ['deleteReport', 'deleteAlert']) {
+    for (const user of [{ flags: ['Funcionario'], isTemp: false }, { flags: ['Admin'], isTemp: true }, { flags: [], isTemp: false }]) {
+      const calls = [];
+      const api = createApi({ getSession: () => ({ ...session(), flags: ['Admin'] }), fetcher: async (url) => {
+        calls.push(url); return json({ userId: 'user-1', ...user });
+      } });
+      await assert.rejects(api[method]('registro-1'), { status: 403 });
+      assert.deepEqual(calls, ['/auth/me']);
+    }
+  }
+});
+
+test('falha ao consultar permissões impede qualquer DELETE', async () => {
+  for (const method of ['deleteReport', 'deleteAlert']) {
+    for (const status of [401, 403, 404, 500]) {
+      const calls = [];
+      const api = createApi({ getSession: session, fetcher: async (url) => { calls.push(url); return json({ message: 'Perfil indisponível' }, status); } });
+      await assert.rejects(api[method]('registro-1'), { status });
+      assert.deepEqual(calls, ['/auth/me']);
+    }
+  }
+});
+
+test('exclusões propagam 401, 403, 404 e 500 sem repetir a operação nem alterar registros locais', async () => {
+  for (const method of ['deleteReport', 'deleteAlert']) {
+    for (const status of [401, 403, 404, 500]) {
+      const records = [{ id: 'selecionado' }, { id: 'preservado' }]; const calls = []; let expired = 0;
+      const api = createApi({ getSession: session, onUnauthorized: () => expired++, fetcher: async (url, options) => {
+        calls.push([url, options.method]);
+        return url === '/auth/me' ? json({ userId: 'user-1', isTemp: false, flags: ['Admin'] }) : json({ message: 'Exclusão recusada' }, status);
+      } });
+      await assert.rejects(api[method](records[0].id), { status, message: 'Exclusão recusada' });
+      assert.equal(calls.length, 2);
+      assert.equal(calls[1][1], 'DELETE');
+      assert.deepEqual(records, [{ id: 'selecionado' }, { id: 'preservado' }]);
+      assert.equal(expired, status === 401 ? 1 : 0);
+    }
+  }
+});
 test('acesso temporário usa POST autenticado sem inventar campos ou alterar sessão', async () => {
   const saved = session(); const before = { ...saved }; const calls = [];
   const credentials = { userId: 'temp-1', username: 'temporary', password: 'generated-secret' };
