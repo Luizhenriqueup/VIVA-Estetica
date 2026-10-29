@@ -23,7 +23,6 @@ export default function Checklists() {
         <article className="card h-100 border-0 shadow-sm"><div className="card-body p-4">
           <h2 className="h5">Checklist de segurança</h2>
           <p className="text-break mt-4"><strong>Paciente:</strong> {typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}</p>
-          <p className="text-muted">21 respostas · 4 etapas</p>
           <Link to={'/checklists/' + encodeURIComponent(report.id)} className="btn btn-outline-success" aria-label={'Ver respostas do checklist ' + report.id}>Ver respostas</Link>
           {deletion.canDelete && <button type="button" className="btn btn-outline-danger ms-2" disabled={loading || deletion.deleting !== null}
             aria-label={'Excluir checklist ' + report.id} onClick={() => deletion.remove(report.id, 'o checklist ' + '' + ' do paciente ' + (report.nome || 'não informado'))}>

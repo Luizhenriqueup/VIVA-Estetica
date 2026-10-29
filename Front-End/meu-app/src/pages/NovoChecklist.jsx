@@ -99,7 +99,6 @@ export default function NovoChecklist() {
         <p>Suas 21 respostas foram salvas.</p>
         <p className="text-break">Identificador: {receipt.id}</p>
         <p>Confirmação neste dispositivo: {receipt.confirmedAt}</p>
-        <p className="small text-muted">Esta data aparece somente nesta confirmação e não é salva no histórico.</p>
         <div className="d-flex flex-wrap gap-2">
           <Link className="btn btn-verde" to={'/checklists/' + encodeURIComponent(receipt.id)}>Ver respostas</Link>
           <Link className="btn btn-outline-success" to="/checklists">Ver checklists realizados</Link>

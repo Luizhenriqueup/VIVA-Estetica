@@ -53,6 +53,7 @@ model Report {
   userId        String
   nome          String @default("")
   questionnaire Json   @default("[]") @db.JsonB
+  createdAt     DateTime? @default(now()) @db.Timestamptz(3)
   user          User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([userId])

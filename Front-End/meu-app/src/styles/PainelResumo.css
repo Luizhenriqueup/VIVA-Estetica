@@ -1,0 +1,64 @@
+.painel-resumo .painel-resumo__nome,
+.painel-resumo .painel-resumo__titulo {
+  color: #1b3b2f;
+}
+
+.painel-resumo .card-body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.painel-resumo .painel-resumo__item {
+  padding: 1rem 0;
+}
+
+.painel-resumo .painel-resumo__item + .painel-resumo__item {
+  border-top: 1px solid #e3e6e3;
+}
+
+.painel-resumo .painel-resumo__item:first-child {
+  padding-top: 0;
+}
+
+.painel-resumo .painel-resumo__item:last-child {
+  padding-bottom: 0;
+}
+
+.painel-resumo .painel-resumo__atalho {
+  display: block;
+  margin: -1rem 0;
+  padding: 1rem 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--bs-border-radius);
+}
+
+.painel-resumo .painel-resumo__atalho:hover {
+  background-color: #f5f7f5;
+}
+
+.painel-resumo .painel-resumo__atalho:focus-visible {
+  outline: 2px solid #1b3b2f;
+  outline-offset: 3px;
+}
+
+.painel-resumo .painel-resumo__item:first-child .painel-resumo__atalho {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.painel-resumo .painel-resumo__item:last-child .painel-resumo__atalho {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.painel-resumo .painel-resumo__paciente {
+  min-width: 0;
+}
+
+.painel-resumo .painel-resumo__novo {
+  flex-shrink: 0;
+  color: #1b3b2f;
+  background-color: #e3eee5;
+}
