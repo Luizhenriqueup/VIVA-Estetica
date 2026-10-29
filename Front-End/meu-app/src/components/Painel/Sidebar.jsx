@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import useUsersAccess from '../Usuarios/useUsersAccess';
 /*import SeletorPerfil from './SeletorPerfil';*/
 import logoViva from '../../assets/logoSinabar.png';
 const ATALHOS = [
@@ -11,6 +12,7 @@ const ATALHOS = [
   { id: 'conteudo', nome: 'Conteúdo educativo', icone: 'bi-mortarboard' },
 ];
 export default function Sidebar({ onFechar, onLogout, pending }) {
+  const access = useUsersAccess();
   return <>
     <div className="text-center my-3">
       <NavLink to="/painel" onClick={onFechar}>
@@ -20,7 +22,7 @@ export default function Sidebar({ onFechar, onLogout, pending }) {
     {/*}<SeletorPerfil />{*/}
     <hr />
     <nav aria-label="Navegação principal" className="nav nav-pills flex-column gap-1 mb-auto">
-      {ATALHOS.map((item) => <NavLink key={item.id} to={'/' + item.id} onClick={onFechar}
+      {ATALHOS.filter((item) => item.id !== 'usuarios-temporarios' || access.allowed).map((item) => <NavLink key={item.id} to={'/' + item.id} onClick={onFechar}
         className={({ isActive }) => 'nav-link text-white ' + (isActive ? 'active' : 'item-sidebar-proprio')}>
         <i className={'bi ' + item.icone + ' me-2'} aria-hidden="true" />{item.nome}
       </NavLink>)}

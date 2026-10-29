@@ -80,6 +80,28 @@ async function deleteAction(req, res) {
   res.status(204).end();
 }
 
+async function searchUserAction(req, res) {
+  const username = req.query.username;
+
+  if (!hasText(username)) {
+    return res.status(400).json({
+      message: "Informe o nome de acesso do usuário.",
+    });
+  }
+
+  const user = await authService.findUserByUsername(
+    username.trim()
+  );
+
+  if (!user) {
+    return res.status(404).json({
+      message: "Usuário não encontrado.",
+    });
+  }
+
+  return res.json(user);
+}
+
 async function setFlagsAction(req, res) {
   const { userId, flags } = req.body ?? {};
 
@@ -117,4 +139,5 @@ export default {
   meAction,
   deleteAction,
   setFlagsAction,
+  searchUserAction,
 };

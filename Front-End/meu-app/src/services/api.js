@@ -60,6 +60,12 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
   return {
     login: (credentials) => request('/auth/login', { method: 'POST', body: credentials, authenticated: false }),
     me,
+    searchUser: (username, signal) => request('/auth/users?username=' + encodeURIComponent(username.trim()), { signal }),
+    updateUserFlags: async (userId, flags) => {
+      const actor = await me();
+      if (actor.isTemp || !actor.flags.includes(PERFIS.Admin.id)) throw new ApiError('Você não tem permissão para esta operação.', 403);
+      return request('/auth/flags', { method: 'PUT', body: { userId, flags } });
+    },
     logout: () => request('/auth/logout', { method: 'POST' }),
     createTemporaryUser: async () => {
       const result = await request('/auth/register/tempLogin', { method: 'POST' });

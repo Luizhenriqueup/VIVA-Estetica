@@ -131,6 +131,18 @@ async function getCurrentUser(userId) {
   };
 }
 
+async function findUserByUsername(username) {
+  return prisma.user.findUnique({
+    where: { username },
+    select: {
+      userId: true,
+      username: true,
+      flags: true,
+      isTemp: true,
+    },
+  });
+}
+
 async function logout(tokenHash) {
   const result = await prisma.authToken.deleteMany({
     where: { tokenHash },
@@ -193,4 +205,5 @@ export default {
   logout,
   deleteUser,
   setFlags,
+  findUserByUsername,
 };
