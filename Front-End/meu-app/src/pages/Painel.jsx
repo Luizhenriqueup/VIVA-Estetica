@@ -52,7 +52,7 @@ export default function Painel() {
   }, [reportsLoading, reloadReports]);
 
   return <div className="painel-resumo">
-    <PageTitle title="Painel">Acompanhe seus checklists e os avisos da equipe.</PageTitle>
+    <PageTitle title="Painel">Acompanhe seus checklists e as notificações.</PageTitle>
     <section className="card border-0 shadow-sm mb-4" aria-labelledby="painel-usuario">
       <div className="card-body p-3 p-md-4">
         <h2 id="painel-usuario" className="h6 text-muted mb-3">Usuário conectado</h2>

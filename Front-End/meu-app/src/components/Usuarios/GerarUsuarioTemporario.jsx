@@ -27,7 +27,6 @@ export default function GerarUsuarioTemporario() {
   return <>
     
     <section className="card border-0 shadow-sm"><div className="card-body p-4">
-      <h2 className="h5">Criar acesso temporário</h2>
       {error && <>
         <ErrorState error={error} />
         {error.status !== 401 && error.status !== 403 && <p className="small text-muted">Se a resposta foi interrompida, o acesso pode ter sido criado. Confirme com o responsável antes de tentar novamente.</p>}
@@ -35,12 +34,12 @@ export default function GerarUsuarioTemporario() {
       {!credentials && <form onSubmit={submit} aria-busy={pending}>
         <button className="btn btn-verde" type="submit" disabled={pending}>
           {pending && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />}
-          {pending ? 'Gerando acesso…' : 'Gerar acesso temporário'}
+          {pending ? 'Gerando acesso…' : 'Clique aqui para gerar acesso temporário'}
         </button>
       </form>}
       {credentials && <>
         <div className="alert alert-success" role="status">Acesso temporário criado com sucesso.</div>
-        <p>Entregue estas credenciais à pessoa que utilizará o acesso. Após entrar, ela poderá selecionar “Ativar conta temporária” para definir seu usuário e sua senha.</p>
+        <p>Entregue estas credenciais à pessoa que utilizará o acesso. Após entrar, ela será direcionada à ativação da conta para definir seu usuário e sua senha.</p>
         <dl className="row mb-3">
           <dt className="col-12 col-sm-3">Usuário</dt>
           <dd className="col-12 col-sm-9 text-break"><code>{credentials.username}</code></dd>

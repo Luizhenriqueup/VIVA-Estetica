@@ -13,7 +13,7 @@ export default function UsuariosTemporarios() {
   return <>
     <PageTitle title="Usuários">Gere acessos temporários e consulte as contas da equipe.</PageTitle>
     <div className="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="Funcionalidades de usuários">
-      <button type="button" className={'btn ' + (section === 'generate' ? 'btn-verde' : 'btn-outline-success')} aria-pressed={section === 'generate'} onClick={() => setSection('generate')}>Gerar usuário temporário</button>
+      <button type="button" className={'btn ' + (section === 'generate' ? 'btn-verde' : 'btn-outline-success')} aria-pressed={section === 'generate'} onClick={() => setSection('generate')}>Usuário temporário</button>
       <button type="button" className={'btn ' + (section === 'search' ? 'btn-verde' : 'btn-outline-success')} aria-pressed={section === 'search'} onClick={() => setSection('search')}>Procurar usuário</button>
     </div>
     <div hidden={section !== 'generate'}><GerarUsuarioTemporario /></div>

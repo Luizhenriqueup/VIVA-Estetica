@@ -1,10 +1,9 @@
-import { Link } from 'react-router-dom';
 export function Loading() {
   return <div className="py-5 text-center text-muted" role="status"><span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />Carregando…</div>;
 }
 export function ErrorState({ error, onRetry }) {
   return <div className="alert alert-danger" role="alert"><p className="mb-2">{error.message}</p>
-    {error.status === 403 && <p className="small">Sua conta não tem acesso a esta operação. Procure o responsável ou <Link to="/ativar-conta">ative sua conta temporária</Link>, se recebeu credenciais de primeiro acesso.</p>}
+    {error.status === 403 && <p className="small">Sua conta não tem acesso a esta operação. Procure o responsável pelo sistema.</p>}
     {onRetry && <button className="btn btn-sm btn-outline-danger" onClick={onRetry}>Tentar novamente</button>}
   </div>;
 }

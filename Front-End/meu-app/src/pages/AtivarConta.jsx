@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/auth';
 import { ErrorState, PageTitle } from '../components/Feedback';
-export default function AtivarConta() {
+export default function AtivarConta({ exit }) {
   const { api, endSession } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +27,11 @@ export default function AtivarConta() {
         <input id="novo-usuario" className="form-control mb-3" autoComplete="username" required value={username} onChange={(e) => setUsername(e.target.value)} />
         <label className="form-label" htmlFor="nova-senha">Nova senha (mínimo de 12 caracteres)</label>
         <input id="nova-senha" className="form-control mb-3" autoComplete="new-password" type="password" minLength={8} required value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type="submit" className="btn btn-verde">{pending ? 'Ativando…' : 'Ativar conta'}</button>
+        <div className="d-flex justify-content-between">
+          <button type="submit" className="btn btn-verde">{pending ? 'Ativando…' : 'Ativar conta'}</button>
+          <div className="mt-3">{exit}
+        </div>
+        </div>
       </fieldset></form>
     </div></section>
   </>;

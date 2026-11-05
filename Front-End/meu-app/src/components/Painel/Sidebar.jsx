@@ -28,7 +28,6 @@ export default function Sidebar({ onFechar, onLogout, pending }) {
       </NavLink>)}
     </nav>
     <hr />
-    <NavLink to="/ativar-conta" onClick={onFechar} className="small text-white text-center mb-3">Ativar conta temporária</NavLink>
     <button className="btnM btn-outline-verde" disabled={pending} onClick={onLogout}>{pending ? 'Saindo…' : 'Sair'}</button>
   </>;
 }
