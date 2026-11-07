@@ -1,7 +1,16 @@
 import reportService from "../services/reportService.js";
+import { paginatedResponse, parsePagination } from "../utils/pagination.js";
 
 async function getAllAction(req, res) {
-  res.json(await reportService.getAllForUser(req.auth.userId));
+  const pagination = parsePagination(req.query);
+  if (!pagination) {
+    return res.status(400).json({
+      message: "Os parâmetros page e limit devem ser inteiros positivos; limit não pode exceder 100.",
+    });
+  }
+
+  const { data, total } = await reportService.getAll(pagination);
+  res.json(paginatedResponse(data, total, pagination));
 }
 
 async function getByIdAction(req, res) {

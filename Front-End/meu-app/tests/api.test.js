@@ -188,8 +188,24 @@ test('listas usam Bearer e retornam os arrays sem paginação inventada', async 
   const saved = session(); const calls = [];
   const api = createApi({ getSession: () => saved, fetcher: async (...args) => { calls.push(args); return json([]); } });
   assert.deepEqual(await api.reports(), []); assert.deepEqual(await api.alerts(), []);
-  assert.deepEqual(calls.map(([url]) => url), ['/reports', '/alerts']);
+  assert.deepEqual(calls.map(([url]) => url), ['/reports?page=1', '/alerts?page=1']);
   assert.ok(calls.every(([, options]) => options.headers.Authorization === 'Bearer ' + saved.token && options.method === 'GET'));
+});
+test('listas percorrem todas as páginas e devolvem todos os registros', async () => {
+  const calls = [];
+  const api = createApi({
+    getSession: session,
+    fetcher: async (url) => {
+      calls.push(url);
+      const page = Number(new URL(url, 'http://localhost').searchParams.get('page'));
+      return json({
+        data: [`registro-${page}`],
+        pagination: { page, limit: 1, total: 2, totalPages: 2 },
+      });
+    },
+  });
+  assert.deepEqual(await api.reports(), ['registro-1', 'registro-2']);
+  assert.deepEqual(calls, ['/reports?page=1', '/reports?page=2']);
 });
 test('criação de alerta usa title/message e detalhe codifica o ID', async () => {
   const calls = [];

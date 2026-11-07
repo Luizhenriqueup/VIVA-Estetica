@@ -40,9 +40,22 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     return data;
   }
   async function list(path, signal) {
-    const data = await request(path, { signal });
-    if (!Array.isArray(data)) throw new ApiError('A lista recebida do servidor é inválida.');
-    return data;
+    const items = [];
+    let page = 1;
+    while (true) {
+      const result = await request(`${path}?page=${page}`, { signal });
+      if (Array.isArray(result) && page === 1) return result;
+      const metadata = result?.pagination;
+      if (!Array.isArray(result?.data) || !metadata ||
+          metadata.page !== page || !Number.isSafeInteger(metadata.totalPages) ||
+          metadata.totalPages < 0 || !Number.isSafeInteger(metadata.total) || metadata.total < 0) {
+        throw new ApiError('A lista recebida do servidor é inválida.');
+      }
+
+      items.push(...result.data);
+      if (page >= metadata.totalPages) return items;
+      page++;
+    }
   }
   async function me(signal) {
     const user = await request('/auth/me', { signal });

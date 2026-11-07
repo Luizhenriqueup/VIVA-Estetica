@@ -1,5 +1,6 @@
 import authService from "../services/authService.js";
 import { allFlags, isFlag } from "../domain/flags.js";
+import { paginatedResponse, parsePagination } from "../utils/pagination.js";
 
 function hasText(value) {
   return typeof value === "string" && value.trim().length > 0;
@@ -82,6 +83,18 @@ async function deleteAction(req, res) {
 
 async function searchUserAction(req, res) {
   const username = req.query.username;
+
+  if (username === undefined) {
+    const pagination = parsePagination(req.query);
+    if (!pagination) {
+      return res.status(400).json({
+        message: "Os parâmetros page e limit devem ser inteiros positivos; limit não pode exceder 100.",
+      });
+    }
+
+    const { data, total } = await authService.getAllUsers(pagination);
+    return res.json(paginatedResponse(data, total, pagination));
+  }
 
   if (!hasText(username)) {
     return res.status(400).json({
