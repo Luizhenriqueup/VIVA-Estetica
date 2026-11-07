@@ -28,6 +28,8 @@ Isso representa a terceira alternativa da primeira pergunta, a primeira alternat
 |---|---|---|
 | `POST /auth/login` | Autentica usuário e senha e cria um token com validade de 12 horas. | Público |
 | `GET /auth/me` | Retorna os dados da conta autenticada e os IDs dos relatórios dela. | Token |
+| `GET /auth/users` | Lista usuários em ordem alfabética, com paginação. | Token; `Admin` ou `Gerente` |
+| `GET /auth/users?username=ana` | Busca um usuário pelo nome de acesso. | Token; `Admin` ou `Gerente` |
 | `POST /auth/register/tempLogin` | Cria uma conta temporária e retorna as credenciais para ela. | Token; `Admin` ou `Gerente`; conta temporária não autorizada |
 | `POST /auth/register` | Ativa a conta temporária autenticada, definindo usuário e senha permanentes. Tokens existentes dessa conta são revogados. | Token da conta temporária a ativar |
 | `POST /auth/logout` | Encerra a sessão do token enviado. | Token |
@@ -84,6 +86,35 @@ Resposta `201`:
 
 Erro: `403` para falta de permissão ou conta temporária.
 
+### `GET /auth/users`
+
+Lista usuários, incluindo contas temporárias, sem retornar dados de autenticação. A consulta é restrita a `Admin` e `Gerente`.
+
+Parâmetros opcionais: `page` (padrão `1`) e `limit` (padrão `20`, máximo `100`), ambos inteiros positivos. Exemplo: `GET /auth/users?page=2&limit=10`.
+
+Resposta `200`:
+
+```json
+{
+  "data": [
+    {
+      "userId": "cm...",
+      "username": "ana",
+      "flags": ["Funcionario"],
+      "isTemp": false
+    }
+  ],
+  "pagination": {
+    "page": 2,
+    "limit": 10,
+    "total": 23,
+    "totalPages": 3
+  }
+}
+```
+
+`GET /auth/users?username=ana` mantém a busca individual existente e retorna um usuário ou `404`. Parâmetros de paginação inválidos retornam `400`; falta de permissão retorna `403`.
+
 ### `POST /auth/register`
 
 Exemplo, enviado com o token da conta temporária:
@@ -131,12 +162,12 @@ Exemplo: `DELETE /auth/cm...`, usando o próprio token. Resposta `204` sem conte
 
 ## Relatórios — `/reports`
 
-Todos os endpoints exigem um token de conta permanente com pelo menos uma das flags `Admin`, `Gerente` ou `Funcionario`. Cada relatório é associado exclusivamente ao usuário autenticado. Um `userId` enviado pelo cliente não define nem altera o proprietário.
+Todos os endpoints exigem um token de conta permanente com pelo menos uma das flags `Admin`, `Gerente` ou `Funcionario`. A listagem inclui relatórios de todos os usuários; criação, consulta por ID e exclusão continuam vinculadas ao usuário autenticado. Um `userId` enviado pelo cliente não define nem altera o proprietário.
 
 | Método e caminho | O que faz |
 |---|---|
 | `POST /reports` | Cria um relatório para o usuário autenticado com nome e respostas do questionário. |
-| `GET /reports` | Lista somente os relatórios do usuário autenticado. |
+| `GET /reports` | Lista relatórios de todos os usuários, com paginação. |
 | `GET /reports/:id` | Consulta um relatório pertencente ao usuário autenticado. |
 | `DELETE /reports/:id` | Exclui um relatório pertencente ao usuário autenticado. |
 
@@ -154,6 +185,10 @@ Resposta `201`:
 {
   "id": "cm...",
   "userId": "cm...",
+  "createdBy": {
+    "userId": "cm...",
+    "username": "ana"
+  },
   "nome": "Avaliação inicial",
   "questionnaire": [2, 0, 1]
 }
@@ -163,20 +198,36 @@ Erros: `400` se `nome` estiver ausente, vazio ou não for uma string, ou se `que
 
 ### `GET /reports`
 
+Parâmetros opcionais: `page` (padrão `1`) e `limit` (padrão `20`, máximo `100`), ambos inteiros positivos. A lista inclui relatórios de todos os usuários e é ordenada do mais recente para o mais antigo. Exemplo: `GET /reports?page=2&limit=10`.
+
 Resposta `200`:
 
 ```json
-[
-  {
-    "id": "cm...",
-    "userId": "cm...",
-    "nome": "Avaliação inicial",
-    "questionnaire": [2, 0, 1]
+{
+  "data": [
+    {
+      "id": "cm...",
+      "userId": "cm...",
+      "createdBy": {
+        "userId": "cm...",
+        "username": "ana"
+      },
+      "nome": "Avaliação inicial",
+      "questionnaire": [2, 0, 1]
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 37,
+    "totalPages": 2
   }
-]
+}
 ```
 
-Relatórios existentes são preservados e retornam `nome: ""` caso tenham sido criados antes da inclusão desse campo. Erros: `401` para autenticação inválida/ausente; `403` para conta temporária ou usuário sem flag autorizada.
+Cada relatório inclui `createdBy`, com o `userId` e o `username` de quem o criou. O campo é retornado na listagem, na criação e na consulta por ID.
+
+Relatórios existentes são preservados e retornam `nome: ""` caso tenham sido criados antes da inclusão desse campo. A consulta por ID e a exclusão continuam restritas aos relatórios do usuário autenticado. Erros: `400` para parâmetros inválidos; `401` para autenticação inválida/ausente; `403` para conta temporária ou usuário sem flag autorizada.
 
 ### `GET /reports/:id`
 
@@ -188,13 +239,13 @@ Resposta `204` sem conteúdo. Retorna `404` se o relatório não existir ou pert
 
 ## Alertas — `/alerts`
 
-Todos os endpoints exigem autenticação por token de uma conta permanente. A leitura exige uma das flags `Admin`, `Gerente` ou `Funcionario`; criação, atualização e exclusão exigem `Admin` ou `Gerente`.
+Todos os endpoints exigem um token autenticado. Qualquer conta autenticada pode criar alertas e consultar apenas os próprios; `Gerente` e `Admin` podem consultar todos. Atualização e exclusão exigem `Gerente` ou `Admin`.
 
 | Método e caminho | O que faz | Permissão |
 |---|---|---|
-| `GET /alerts` | Lista alertas do mais recente para o mais antigo. | Qualquer flag válida |
-| `GET /alerts/:id` | Consulta um alerta. | Qualquer flag válida |
-| `POST /alerts` | Cria um alerta. | `Admin` ou `Gerente` |
+| `GET /alerts` | Lista alertas do mais recente para o mais antigo, com paginação. | Token; próprios alertas, ou todos para `Gerente`/`Admin` |
+| `GET /alerts/:id` | Consulta um alerta próprio; `Gerente` e `Admin` podem consultar qualquer alerta. | Token |
+| `POST /alerts` | Cria um alerta para a conta autenticada. | Token |
 | `PUT /alerts/:id` | Atualiza parcialmente um alerta. | `Admin` ou `Gerente` |
 | `DELETE /alerts/:id` | Exclui um alerta. | `Admin` ou `Gerente` |
 
@@ -205,10 +256,18 @@ Formato de alerta:
   "id": "cm...",
   "title": "Aviso",
   "message": "Mensagem opcional",
+  "createdBy": {
+    "userId": "cm...",
+    "username": "ana"
+  },
   "createdAt": "2026-10-16T00:00:00.000Z",
   "updatedAt": "2026-10-16T00:00:00.000Z"
 }
 ```
+
+Alertas criados a partir desta alteração retornam `createdBy` com o `userId` e o `username` do criador. Alertas anteriores, cujo criador não pode ser identificado, retornam `createdBy: null`. O campo aparece na listagem, criação, consulta, atualização e exclusão. Para contas comuns, a listagem e a consulta por ID incluem somente alertas próprios; tentar consultar o alerta de outra pessoa retorna `404`. `Gerente` e `Admin` podem ver todos.
+
+`GET /alerts` aceita os parâmetros opcionais `page` (padrão `1`) e `limit` (padrão `20`, máximo `100`), ambos inteiros positivos. Exemplo: `GET /alerts?page=2&limit=10`. A resposta contém `data` (a página de alertas) e `pagination` (`page`, `limit`, `total` e `totalPages`), seguindo o mesmo formato da listagem de usuários. Parâmetros inválidos retornam `400`.
 
 `POST /alerts` requer `title` não vazio e aceita `message` como texto, `null` ou ausente. Exemplo:
 
@@ -216,7 +275,7 @@ Formato de alerta:
 { "title": "Aviso", "message": "Informação importante." }
 ```
 
-Resposta: `201` com o alerta criado. Erros: `400` para campos inválidos; `401` para autenticação inválida/ausente; `403` para conta temporária ou falta de permissão.
+Resposta: `201` com o alerta criado. Erros: `400` para campos inválidos; `401` para autenticação inválida/ausente.
 
 `PUT /alerts/:id` aceita `title`, `message` ou ambos; `title` deve ser texto não vazio, e `message` texto ou `null`. Exemplo:
 
@@ -228,7 +287,7 @@ Resposta: `200` com o alerta atualizado. Erros: `400` se não houver campo para 
 
 `DELETE /alerts/:id` retorna `200` com o alerta excluído. Erros: `401` para autenticação inválida/ausente; `403` sem permissão; `404` se o alerta não existir.
 
-As consultas de alertas retornam `200` com uma lista (GET `/alerts`) ou um alerta (GET `/alerts/:id`); alerta inexistente retorna `404`.
+As consultas de alertas retornam `200` com uma resposta paginada (GET `/alerts`) ou um alerta (GET `/alerts/:id`); alerta inexistente retorna `404`.
 
 ## Erros comuns
 

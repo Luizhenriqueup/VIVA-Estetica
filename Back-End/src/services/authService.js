@@ -143,6 +143,24 @@ async function findUserByUsername(username) {
   });
 }
 
+async function getAllUsers({ skip, take }) {
+  const [data, total] = await Promise.all([
+    prisma.user.findMany({
+      skip,
+      take,
+      orderBy: [{ username: "asc" }, { userId: "asc" }],
+      select: {
+        userId: true,
+        username: true,
+        flags: true,
+        isTemp: true,
+      },
+    }),
+    prisma.user.count(),
+  ]);
+  return { data, total };
+}
+
 async function logout(tokenHash) {
   const result = await prisma.authToken.deleteMany({
     where: { tokenHash },
@@ -206,4 +224,5 @@ export default {
   deleteUser,
   setFlags,
   findUserByUsername,
+  getAllUsers,
 };

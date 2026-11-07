@@ -1,11 +1,32 @@
 import alertService from "../services/alertService.js";
+import { paginatedResponse, parsePagination } from "../utils/pagination.js";
+import { Flags } from "../domain/flags.js";
+
+function canViewAllAlerts(auth) {
+  return auth.flags.includes(Flags.ADMIN) || auth.flags.includes(Flags.GERENTE);
+}
 
 async function getAllAction(req, res) {
-  res.json(await alertService.getAll());
+  const pagination = parsePagination(req.query);
+  if (!pagination) {
+    return res.status(400).json({
+      message: "Os parâmetros page e limit devem ser inteiros positivos; limit não pode exceder 100.",
+    });
+  }
+
+  const { data, total } = await alertService.getAll({
+    ...pagination,
+    userId: req.auth.userId,
+    canViewAll: canViewAllAlerts(req.auth),
+  });
+  res.json(paginatedResponse(data, total, pagination));
 }
 
 async function getByIdAction(req, res) {
-  const alert = await alertService.getById(req.params.id);
+  const alert = await alertService.getById(req.params.id, {
+    userId: req.auth.userId,
+    canViewAll: canViewAllAlerts(req.auth),
+  });
   if (!alert) {
     return res.status(404).json({ message: "Alerta não encontrado." });
   }
@@ -22,7 +43,7 @@ async function createAction(req, res) {
     return res.status(400).json({ message: "O campo message deve ser texto ou null." });
   }
 
-  const alert = await alertService.create({ title: title.trim(), message });
+  const alert = await alertService.create(req.auth.userId, { title: title.trim(), message });
   res.status(201).json(alert);
 }
 
