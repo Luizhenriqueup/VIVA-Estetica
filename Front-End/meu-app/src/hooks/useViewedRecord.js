@@ -9,7 +9,7 @@ export default function useViewedRecord(type, id) {
   const userId = session?.userId;
   const loader = useCallback(async (signal) => {
     const record = await (type === 'checklist' ? api.report(id, signal) : api.alert(id, signal));
-    if (record?.id !== id || (type === 'checklist' && record.userId !== userId)) {
+    if (record?.id !== id) {
       throw new Error('Não foi possível confirmar o registro solicitado.');
     }
     return { record, userId, api };
@@ -20,8 +20,10 @@ export default function useViewedRecord(type, id) {
 
   useEffect(() => {
     if (resource.loading || resource.error || !current) return;
-    if (type === 'checklist' && (payload.record.userId !== userId ||
-        !isCompleteQuestionnaire(payload.record.questionnaire))) return;
+    if (type === 'checklist' && 
+      !isCompleteQuestionnaire(payload.record.questionnaire)) {
+      return;
+      }
     if (type === 'notification' && typeof payload.record.title !== 'string') return;
     markRecordViewed(userId, type, id);
   }, [resource.loading, resource.error, current, payload, type, userId, id]);

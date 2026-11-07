@@ -18,3 +18,16 @@
   .checklist-options { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .checklist-option { transition: none; } }
+
+.checklist-card-footer {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+}
+
+@media (min-width: 440px) {
+  .checklist-card-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}

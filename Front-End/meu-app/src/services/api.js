@@ -89,7 +89,26 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     },
     activate: (credentials) => request('/auth/register', { method: 'POST', body: credentials }),
     reports: (signal) => list('/reports', signal),
-    report: (id, signal) => request(`/reports/${encodeURIComponent(id)}`, { signal }),
+    
+    report: async (id, signal) => {
+      try {
+        return await request(`/reports/${encodeURIComponent(id)}`, { signal });
+      } catch (error) {
+        if (!(error instanceof ApiError) || error.status !== 404) {
+          throw error;
+        }
+
+        const reports = await list('/reports', signal);
+        const report = reports.find((item) => item?.id === id);
+
+        if (!report) {
+          throw error;
+        }
+
+        return report;
+      }
+    },
+
     deleteReport: (id) => remove(`/reports/${encodeURIComponent(id)}`),
     createReport: async ({ nome, questionnaire } = {}) => {
       if (typeof nome !== 'string' || !nome.trim()) throw new ApiError('Informe o nome do paciente.');

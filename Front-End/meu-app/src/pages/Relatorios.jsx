@@ -58,16 +58,50 @@ export default function Relatorios() {
         </button>
       </div>
     </div>
-    {type && <section id="report-form" className="card border-0 shadow-sm report-form" aria-live="polite" aria-labelledby="report-form-title"><div className="card-body p-4 p-lg-5">
-      <h2 id="report-form-title" className="h4 mb-5" tabIndex="-1">Nova Notificação de evento adverso</h2>
-      {error && <ErrorState error={error} />}
-      <form onSubmit={submit} aria-busy={pending}><fieldset disabled={pending}>
-        <label htmlFor="titulo" className="form-label">Título da notificação</label>
-        <input id="titulo" className="form-control mb-3" value={title} onChange={(event) => setTitle(event.target.value)} required />
-        <label htmlFor="descricao" className="form-label">Descrição da notificação</label>
-        <textarea id="descricao" className="form-control mb-3" rows="5" value={message} onChange={(event) => setMessage(event.target.value)} required />
-        <button className="btn btn-verde" type="submit">{pending ? 'Enviando…' : 'Publicar alerta'}</button>
-      </fieldset></form>
-    </div></section>}
+    {type && 
+      <section 
+        id="report-form" 
+        className="card border-0 shadow-sm report-form" 
+        aria-live="polite" 
+        aria-labelledby="report-form-title">
+        <div className="card-body p-4 p-lg-5">
+          <h2 id="report-form-title" className="h4 mb-5" tabIndex="-1">
+            Nova Notificação de evento adverso
+          </h2>
+          {error && <ErrorState error={error} />}
+          <form onSubmit={submit} aria-busy={pending}>
+            <fieldset disabled={pending}>
+              <label htmlFor="titulo" className="form-label">
+                Título da notificação
+              </label>
+              <input 
+                id="titulo" 
+                className="form-control mb-3" 
+                value={title} 
+                maxLength={40}
+                onChange={(event) => setTitle(event.target.value)} 
+                required 
+              />
+              <label htmlFor="descricao" className="form-label">
+                Descrição da notificação
+              </label>
+              <textarea 
+                id="descricao" 
+                className="form-control mb-3" 
+                rows="5" 
+                value={message} 
+                onChange={(event) => setMessage(event.target.value)} 
+                required 
+              />
+              <button 
+                className="btn btn-verde" 
+                type="submit">
+                {pending ? 'Enviando…' : 'Publicar notificação'}
+              </button>
+            </fieldset>
+          </form>
+        </div>
+      </section>
+    }
   </>;
 }

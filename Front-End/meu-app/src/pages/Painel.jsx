@@ -7,6 +7,7 @@ import useResource from '../hooks/useResource';
 import { ErrorState, Loading, PageTitle } from '../components/Feedback';
 import { formatDate } from '../utils/formatDate';
 import RecordNewBadge from '../components/Painel/RecordNewBadge';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/PainelResumo.css';
 
 function checklistTime(report) {
@@ -24,20 +25,21 @@ function ResourceContent({ resource, empty, children }) {
 export default function Painel() {
   const { api, session } = useAuth();
   const user = useResource(api.me);
+  const navigate = useNavigate();
   const reports = useResource(api.reports);
   const { loading: reportsLoading, reload: reloadReports } = reports;
   const alerts = useResource(api.alerts);
   const profiles = resolverPerfis(user.data?.flags || []);
   const checklists = useMemo(() => (reports.data || []).filter((report) =>
-    report && typeof report.id === 'string' && report.userId === session?.userId &&
-    isCompleteQuestionnaire(report.questionnaire))
-    .sort((a, b) => {
-      const first = checklistTime(a);
-      const second = checklistTime(b);
-      if (first === null) return second === null ? 0 : 1;
-      if (second === null) return -1;
-      return second - first;
-    }).slice(0, 5), [reports.data, session?.userId]);
+  report && typeof report.id === 'string' &&
+  isCompleteQuestionnaire(report.questionnaire))
+  .sort((a, b) => {
+    const first = checklistTime(a);
+    const second = checklistTime(b);
+    if (first === null) return second === null ? 0 : 1;
+    if (second === null) return -1;
+    return second - first;
+  }).slice(0, 5), [reports.data]);
   const notifications = (alerts.data || []).filter((alert) => alert && typeof alert.id === 'string')
     .slice().sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0)).slice(0, 5);
 
@@ -71,7 +73,7 @@ export default function Painel() {
       <div className="col-12 col-xl-6">
         <section className="card border-0 shadow-sm" aria-labelledby="painel-checklists">
           <div className="card-body p-3 p-md-4">
-            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">Meus últimos checklists</h2>
+            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">Últimos checklists da equipe</h2>
             <ResourceContent resource={reports} empty="Nenhum checklist realizado até o momento.">
               {checklists.map((report) => {
                 const createdAt = checklistTime(report);
@@ -79,10 +81,29 @@ export default function Painel() {
                 <Link className="painel-resumo__atalho" to={'/checklists/' + encodeURIComponent(report.id)}>
                   <div className="d-flex align-items-start justify-content-between gap-2">
                     <h3 className="h6 mb-1 painel-resumo__paciente">{typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}</h3>
-                    <RecordNewBadge userId={session?.userId} type="checklist" recordId={report.id} />
+                    <div className="d-flex flex-wrap align-items-center justify-content-end gap-2">
+                      <RecordNewBadge
+                        userId={session?.userId}
+                        type="checklist"
+                        recordId={report.id}
+                      />
+                    </div>
                   </div>
-                  <p className="small text-muted mb-0">{createdAt !== null ?
-                    <time dateTime={report.createdAt}>{formatDate(report.createdAt)}</time> : 'Data de criação não informada'}</p>
+                  <div className="d-flex justify-content-between align-items-center gap-2">
+                    <p className="small text-muted mb-0">
+                      {report.createdAt !== null ? (
+                        <time dateTime={report.createdAt}>
+                          {formatDate(report.createdAt)}
+                        </time>
+                      ) : (
+                        'Data de criação não informada'
+                      )}
+                    </p>
+
+                    <span className="small text-muted text-break align-items-start">
+                      Criado por: {report.createdBy?.username || 'Autor não informado'}
+                    </span>
+                  </div>
                 </Link>
               </li>;
               })}
@@ -93,16 +114,37 @@ export default function Painel() {
       <div className="col-12 col-xl-6">
         <section className="card border-0 shadow-sm" aria-labelledby="painel-notificacoes">
           <div className="card-body p-3 p-md-4">
-            <h2 id="painel-notificacoes" className="h5 painel-resumo__titulo mb-3">Últimas notificações do sistema</h2>
-            <ResourceContent resource={alerts} empty="Nenhuma notificação disponível até o momento.">
-              {notifications.map((alert) => <li key={alert.id} className="painel-resumo__item">
-                <Link className="painel-resumo__atalho" to={'/alertas/' + encodeURIComponent(alert.id)}>
+            <h2 id="painel-notificacoes" className="h5 painel-resumo__titulo mb-3">
+              Últimas notificações do sistema
+            </h2>
+            <ResourceContent 
+            resource={alerts} 
+            empty="Nenhuma notificação disponível até o momento.">
+              {notifications.map((alert) => 
+                <li key={alert.id} className="painel-resumo__item">
+                <Link 
+                  className="painel-resumo__atalho" 
+                  to={'/alertas/' + encodeURIComponent(alert.id)}>
                   <div className="d-flex align-items-start justify-content-between gap-2">
-                    <h3 className="h6 mb-1 painel-resumo__paciente">{alert.title}</h3>
-                    <RecordNewBadge userId={session?.userId} type="notification" recordId={alert.id} />
+                    <h3 className="h6 mb-1 painel-resumo__paciente">
+                      {alert.title}
+                    </h3>
+                    <RecordNewBadge 
+                      userId={session?.userId} 
+                      type="notification" 
+                      recordId={alert.id} 
+                    />
                   </div>
-                  <p className="small text-muted mb-0">{Number.isFinite(Date.parse(alert.createdAt)) ?
-                    <time dateTime={alert.createdAt}>{formatDate(alert.createdAt)}</time> : 'Data não informada'}</p>
+                  <div className="d-flex justify-content-between align-items-center gap-2">
+                    <p className="small text-muted mb-0">
+                      {Number.isFinite(Date.parse(alert.createdAt)) ?
+                      <time dateTime={alert.createdAt}>{formatDate(alert.createdAt)}</time>
+                      : 'Data não informada'}
+                    </p>
+                    <span className="small text-muted text-break align-items-start">
+                      Criado por: {alert.createdBy?.username || 'Autor não informado'}
+                    </span>
+                  </div>
                 </Link>
               </li>)}
             </ResourceContent>
