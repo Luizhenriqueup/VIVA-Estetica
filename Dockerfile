@@ -11,7 +11,6 @@ FROM node:24-alpine
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV DATABASE_URL=postgresql://viva:viva_dev_password@postgres:5432/viva_estetica?schema=public
 
 COPY Back-End/package.json Back-End/package-lock.json ./
 RUN npm ci
