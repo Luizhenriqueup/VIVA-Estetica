@@ -19,4 +19,5 @@ RUN npm run db:generate
 COPY --from=frontend-build /frontend/dist ./public
 
 EXPOSE 3000
-CMD ["sh", "-c", "./node_modules/.bin/prisma db push && npm start"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma db push && npm run db:bootstrap-admin && npm start"]
+
