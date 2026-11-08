@@ -73,6 +73,15 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
   return {
     login: (credentials) => request('/auth/login', { method: 'POST', body: credentials, authenticated: false }),
     me,
+    listUsers: async (signal) => {
+      const users = await list('/auth/users', signal);
+      if (users.some((user) => !user || typeof user.userId !== 'string' ||
+          typeof user.username !== 'string' || typeof user.isTemp !== 'boolean' ||
+          !Array.isArray(user.flags) || user.flags.some((flag) => typeof flag !== 'string'))) {
+        throw new ApiError('A lista de usuários recebida do servidor é inválida.');
+      }
+      return users;
+    },
     searchUser: (username, signal) => request('/auth/users?username=' + encodeURIComponent(username.trim()), { signal }),
     updateUserFlags: async (userId, flags) => {
       const actor = await me();

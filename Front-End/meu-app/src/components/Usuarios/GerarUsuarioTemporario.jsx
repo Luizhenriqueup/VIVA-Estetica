@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useAuth } from '../../contexts/auth';
 import { ErrorState } from '../Feedback';
+import ModalUsuarios from './ModalUsuarios';
 
 export default function GerarUsuarioTemporario() {
   const { api } = useAuth();
@@ -9,47 +10,49 @@ export default function GerarUsuarioTemporario() {
   const [error, setError] = useState(null);
   const submitting = useRef(false);
 
-  async function submit(event) {
-    event.preventDefault();
+  async function generate() {
     if (submitting.current || credentials) return;
     submitting.current = true;
-    setPending(true); setError(null);
+    setPending(true);
+    setError(null);
     try {
       setCredentials(await api.createTemporaryUser());
-    } catch (err) {
-      setError(err);
+    } catch (failure) {
+      setError(failure);
     } finally {
       submitting.current = false;
       setPending(false);
     }
   }
 
+  function closeCredentials() {
+    setCredentials(null);
+  }
+
   return <>
-    
-    <section className="card border-0 shadow-sm"><div className="card-body p-4">
-      {error && <>
-        <ErrorState error={error} />
-        {error.status !== 401 && error.status !== 403 && <p className="small text-muted">Se a resposta foi interrompida, o acesso pode ter sido criado. Confirme com o responsável antes de tentar novamente.</p>}
-      </>}
-      {!credentials && <form onSubmit={submit} aria-busy={pending}>
-        <button className="btn btn-verde" type="submit" disabled={pending}>
-          {pending && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />}
-          {pending ? 'Gerando acesso…' : 'Clique aqui para gerar acesso temporário'}
-        </button>
-      </form>}
-      {credentials && <>
-        <div className="alert alert-success" role="status">Acesso temporário criado com sucesso.</div>
-        <p>Entregue estas credenciais à pessoa que utilizará o acesso. Após entrar, ela será direcionada à ativação da conta para definir seu usuário e sua senha.</p>
+    <button className="btn btn-verde" type="button" disabled={pending} aria-busy={pending} onClick={generate}>
+      {pending ? 'Gerando acesso…' : 'Gerar usuário temporário'}
+    </button>
+    {error && <div className="mt-3">
+      <ErrorState error={error} />
+      {error.status !== 401 && error.status !== 403 && (
+        <p className="small text-muted">Se a resposta foi interrompida, o acesso pode ter sido criado. Confirme com o responsável antes de tentar novamente.</p>
+      )}
+    </div>}
+    {credentials && (
+      <ModalUsuarios title="Acesso temporário criado" onCancel={closeCredentials}>
+        <p>Entregue estas credenciais à pessoa que vai usar o acesso. Ela definirá o usuário e a senha definitivos ao ativar a conta.</p>
         <dl className="row mb-3">
           <dt className="col-12 col-sm-3">Usuário</dt>
           <dd className="col-12 col-sm-9 text-break"><code>{credentials.username}</code></dd>
           <dt className="col-12 col-sm-3">Senha</dt>
           <dd className="col-12 col-sm-9 text-break"><code>{credentials.password}</code></dd>
         </dl>
-        <p className="small text-muted">As credenciais deixam de aparecer ao sair ou atualizar esta página. Guarde-as antes de continuar.</p>
-        <button type="button" className="btn btn-outline-success" onClick={() => { setCredentials(null); setError(null); }}>Limpar credenciais exibidas</button>
-      </>}
-    </div></section>
+        <p className="small text-muted">Guarde as credenciais antes de fechar. Elas só são exibidas uma vez.</p>
+        <div className="d-flex justify-content-end">
+          <button type="button" className="btn btn-outline-success" onClick={closeCredentials}>Fechar</button>
+        </div>
+      </ModalUsuarios>
+    )}
   </>;
 }
-
