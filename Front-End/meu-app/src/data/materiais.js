@@ -13,6 +13,7 @@ export const documentos = [
   {
     id: 'pdf-de-teste-copyy',
     titulo: 'PDF de teste Copia',
+    descricao: 'Documento de teste',
     url: '/pdfs/pdf-de-teste-copy.pdf',
   },
 ];

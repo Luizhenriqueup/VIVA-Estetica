@@ -4,7 +4,7 @@ import useUsersAccess from '../Usuarios/useUsersAccess';
 import logoViva from '../../assets/logoSinabar.png';
 const ATALHOS = [
   { id: 'painel', nome: 'Painel', icone: 'bi-grid' },
-  { id: 'relatorios', nome: 'Relatórios', icone: 'bi-bar-chart' },
+  { id: 'relatorios', nome: 'Criação', icone: 'bi-bar-chart' },
   { id: 'checklists', nome: 'Checklists', icone: 'bi-check2-square' },
   { id: 'alertas', nome: 'Notificações', icone: 'bi-bell' },
   { id: 'usuarios-temporarios', nome: 'Usuários', icone: 'bi-person-plus' },

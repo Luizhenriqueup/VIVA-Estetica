@@ -70,4 +70,24 @@ async function deleteAction(req, res) {
   res.status(204).end();
 }
 
-export default { getAllAction, getByIdAction, createAction, deleteAction, canViewAllReports };
+async function updateAction(req, res) {
+  const { questionnaire } = req.body ?? {};
+  if (!Array.isArray(questionnaire) || questionnaire.length !== 21 ||
+      !Array.from(questionnaire).every((answer) => Number.isInteger(answer) && answer >= 0 && answer <= 2)) {
+    return res.status(400).json({ message: "Informe as 21 respostas válidas do checklist." });
+  }
+
+  const report = await reportService.updateQuestionnaire(
+    req.params.id,
+    req.auth.userId,
+    canViewAllReports(req.auth),
+    questionnaire,
+  );
+  if (!report) {
+    return res.status(404).json({ message: "Relatório não encontrado." });
+  }
+
+  res.json(report);
+}
+
+export default { getAllAction, getByIdAction, createAction, deleteAction, updateAction, canViewAllReports };

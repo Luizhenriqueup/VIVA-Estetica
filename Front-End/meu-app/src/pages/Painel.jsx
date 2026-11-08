@@ -77,16 +77,16 @@ export default function Painel() {
         <section className="card border-0 shadow-sm" aria-labelledby="painel-checklists">
           <div className="card-body p-3 p-md-4">
 
-            <div className="d-flex justify-content-between gap-2">
-            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">
-              Últimos checklists
-            </h2>
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-0">
+                Últimos checklists
+              </h2>
 
-            {!reports.loading && !reports.error && highRiskCount > 0 && (
-              <p className="mb-3 badge text-bg-danger">
-                Existe <strong>{highRiskCount}</strong> checklist(s) em Alto Risco!
-              </p>
-            )}
+              {!reports.loading && !reports.error && highRiskCount > 0 && (
+                <p className="badge text-bg-danger text-wrap text-start mb-0">
+                  Existe <strong>{highRiskCount}</strong> checklist(s) em Alto Risco!
+                </p>
+              )}
             </div>
 
             <ResourceContent resource={reports} empty="Nenhum checklist realizado até o momento.">

@@ -10,6 +10,7 @@ router.use(authMiddleware, flagMiddleware(Object.values(Flags)));
 router.get('/', reportController.getAllAction);
 router.get('/:id', reportController.getByIdAction);
 router.post('/', reportController.createAction);
+router.patch('/:id', reportController.updateAction);
 router.delete('/:id', flagMiddleware([Flags.ADMIN, Flags.GERENTE]),
   reportController.deleteAction,
 );

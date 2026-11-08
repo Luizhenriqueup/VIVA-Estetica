@@ -127,6 +127,21 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     },
 
     deleteReport: (id) => remove(`/reports/${encodeURIComponent(id)}`),
+    updateReportAnswers: async (id, questionnaire) => {
+      if (!isCompleteQuestionnaire(questionnaire)) {
+        throw new ApiError('Responda às 21 perguntas antes de salvar.');
+      }
+
+      const result = await request(`/reports/${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        body: { questionnaire },
+      });
+      if (result?.id !== id || !isCompleteQuestionnaire(result.questionnaire) ||
+          result.questionnaire.some((answer, index) => answer !== questionnaire[index])) {
+        throw new ApiError('Não foi possível confirmar a alteração. Atualize o checklist antes de tentar novamente.');
+      }
+      return result;
+    },
     createReport: async ({ nome, questionnaire } = {}) => {
       if (typeof nome !== 'string' || !nome.trim()) throw new ApiError('Informe o nome do paciente.');
       const patientName = nome.trim();

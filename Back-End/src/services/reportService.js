@@ -51,11 +51,25 @@ async function create(userId, nome, questionnaire) {
   return includeCreator(report);
 }
 
-async function remove(id, userId) {
+async function updateQuestionnaire(id, userId, canViewAll, questionnaire) {
+  try {
+    const report = await prisma.report.update({
+      where: canViewAll ? { id } : { id, userId },
+      data: { questionnaire },
+      select: reportSelect,
+    });
+    return includeCreator(report);
+  } catch (error) {
+    if (error.code === "P2025") return null;
+    throw error;
+  }
+}
+
+async function remove(id) {
   const result = await prisma.report.deleteMany({
-    where: { id, userId },
+    where: { id },
   });
   return result.count === 1;
 }
 
-export default { getAll, getByIdForUser, create, remove };
+export default { getAll, getByIdForUser, create, updateQuestionnaire, remove };
