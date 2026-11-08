@@ -4,7 +4,7 @@ import useResource from '../hooks/useResource';
 import useRecordDeletion from '../hooks/useRecordDeletion';
 import DeleteConfirmation from '../components/DeleteConfirmation';
 import { EmptyState, ErrorState, Loading, PageTitle } from '../components/Feedback';
-import { isCompleteQuestionnaire } from '../data/checklist';
+import { hasHighRisk, isCompleteQuestionnaire } from '../data/checklist';
 import { useNavigate, useParams } from 'react-router-dom';
 export default function Checklists() {
   const { api } = useAuth();
@@ -33,12 +33,21 @@ export default function Checklists() {
             <article className="card h-100 border-0 shadow-sm">
               <div className="card-body">
                 
+                <div className="d-flex justify-content-between gap-2">
                   <h2 className="h5 mb-0">
                     Checklist
                   </h2>
+
+                  {hasHighRisk(report.questionnaire) && (
+                    <span className="badge text-bg-danger mt-2">Alto risco</span>
+                  )}
+                </div>
+
                   <p className="text-break mt-2">
-                    <strong>Paciente: </strong> 
-                    {typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}
+                    <strong>Paciente: </strong>
+                    {typeof report.nome === 'string' && report.nome.trim()
+                      ? report.nome
+                      : 'Paciente não informado'}
                   </p>
 
                   <p className="text-break align-items-center mt-2">

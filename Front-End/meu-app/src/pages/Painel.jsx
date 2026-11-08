@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { isCompleteQuestionnaire } from '../data/checklist';
+import { hasHighRisk, isCompleteQuestionnaire } from '../data/checklist';
 import { useAuth } from '../contexts/auth';
 import { resolverPerfis } from '../constants/perfis';
 import useResource from '../hooks/useResource';
@@ -27,6 +27,9 @@ export default function Painel() {
   const user = useResource(api.me);
   const navigate = useNavigate();
   const reports = useResource(api.reports);
+  const highRiskCount = (reports.data || []).filter(
+    (report) => hasHighRisk(report?.questionnaire),
+  ).length;
   const { loading: reportsLoading, reload: reloadReports } = reports;
   const alerts = useResource(api.alerts);
   const profiles = resolverPerfis(user.data?.flags || []);
@@ -73,7 +76,19 @@ export default function Painel() {
       <div className="col-12 col-xl-6">
         <section className="card border-0 shadow-sm" aria-labelledby="painel-checklists">
           <div className="card-body p-3 p-md-4">
-            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">Últimos checklists</h2>
+
+            <div className="d-flex justify-content-between gap-2">
+            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">
+              Últimos checklists
+            </h2>
+
+            {!reports.loading && !reports.error && highRiskCount > 0 && (
+              <p className="mb-3 badge text-bg-danger">
+                Existe <strong>{highRiskCount}</strong> checklist(s) em Alto Risco!
+              </p>
+            )}
+            </div>
+
             <ResourceContent resource={reports} empty="Nenhum checklist realizado até o momento.">
               {checklists.map((report) => {
                 const createdAt = checklistTime(report);

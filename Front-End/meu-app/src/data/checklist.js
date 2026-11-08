@@ -37,6 +37,15 @@ export const QUESTIONS = STAGES.flatMap((stage, stageIndex) =>
 export function isAnswer(value) {
   return Number.isInteger(value) && value >= 0 && value < ANSWERS.length;
 }
+export function hasHighRisk(questionnaire) {
+  if (!isCompleteQuestionnaire(questionnaire)) return false;
+
+  const inadequate = ANSWERS.indexOf('Inadequado');
+
+  return QUESTIONS.some(
+    (question, index) => question.critical && questionnaire[index] === inadequate,
+  );
+}
 export function isCompleteQuestionnaire(value) {
   return Array.isArray(value) && value.length === QUESTIONS.length && Array.from(value).every(isAnswer);
 }

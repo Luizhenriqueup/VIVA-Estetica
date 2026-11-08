@@ -1,7 +1,7 @@
 import useViewedRecord from '../hooks/useViewedRecord';
 import { ErrorState, Loading, PageTitle } from '../components/Feedback';
 import { formatDate } from '../utils/formatDate';
-import { ANSWERS, STAGES, isCompleteQuestionnaire } from '../data/checklist';
+import { ANSWERS, STAGES, isCompleteQuestionnaire, hasHighRisk } from '../data/checklist';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Checklist.css';
 export default function ChecklistDetalhe() {
@@ -19,9 +19,9 @@ export default function ChecklistDetalhe() {
     <PageTitle title="Respostas do checklist">Confira as respostas salvas nas quatro etapas.</PageTitle>
     {loading ? <Loading /> : error ? <ErrorState error={error} onRetry={reload} /> : !isCompleteQuestionnaire(data?.questionnaire) ?
       <p className="alert alert-info">Este registro não possui um checklist compatível com o formulário atual.</p> : <>
-        <p className="small text-muted text-break">
-          {formatDate(data.createdAt)}
-        </p>
+          <p className="small text-muted text-break">
+            {formatDate(data.createdAt)}
+          </p>
         <p className="text-break">
           <strong>Paciente: </strong> 
           {typeof data.nome === 'string' && data.nome.trim() ? data.nome : 'Paciente não informado'}
@@ -44,7 +44,7 @@ export default function ChecklistDetalhe() {
                       {question.text}
                     </h3>
                     <p className="mb-1">
-                      Resposta: 
+                      Resposta:{' '} 
                       <strong>
                         {ANSWERS[data.questionnaire[offset + index]]}
                       </strong>

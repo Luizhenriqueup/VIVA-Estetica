@@ -62,7 +62,7 @@ async function createAction(req, res) {
 }
 
 async function deleteAction(req, res) {
-  const deleted = await reportService.remove(req.params.id, req.auth.userId);
+  const deleted = await reportService.remove(req.params.id);
   if (!deleted) {
     return res.status(404).json({ message: "Relatório não encontrado." });
   }
