@@ -24,7 +24,7 @@
   align-items: flex-start;
 }
 
-@media (min-width: 440px) {
+@media (min-width: 800px) {
   .checklist-card-footer {
     flex-direction: row;
     justify-content: space-between;

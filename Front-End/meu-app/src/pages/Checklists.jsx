@@ -20,13 +20,6 @@ export default function Checklists() {
       <Link to="/checklists/novo" className="btn btn-verde">
         Novo checklist
       </Link>
-      <button 
-        type="button" 
-        className="btn btn-outline-success" 
-        disabled={loading} 
-        onClick={reload}>
-        Atualizar checklists
-      </button>
     </div>
     {deletion.error && 
       <ErrorState error={deletion.error} />
@@ -38,18 +31,20 @@ export default function Checklists() {
           <div className="col-12 col-xl-6" key={report.id}>
             <article className="card h-100 border-0 shadow-sm">
               <div className="card-body">
-
-                <div className="d-flex justify-content-between align-items-center gap-2 mb-4">
-                  <h2 className="h5 mb-0">Checklist do(a) paciente{' '} 
-                    {typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}
+                
+                  <h2 className="h5 mb-0">
+                    Checklist
                   </h2>
-                  {/*<p className="text-break mb-0">
+                  <p className="text-break mt-2">
                     <strong>Paciente: </strong> 
                     {typeof report.nome === 'string' && report.nome.trim() ? report.nome : 'Paciente não informado'}
-                  </p>*/}
-                </div>
+                  </p>
 
-                <div className="d-flex checklist-card-footer gap-2">
+                  <p className="text-break align-items-center mt-2">
+                    <strong>Por: </strong> 
+                    {report.createdBy?.username || 'Autor não informado'}
+                  </p>
+
                   <div className='mt-2'>
                     <Link 
                       to={'/checklists/' + encodeURIComponent(report.id)} 
@@ -69,11 +64,7 @@ export default function Checklists() {
                     }
                   </div>
 
-                  <p className="text-break align-items-end m-0">
-                    <strong>Por: </strong> 
-                    {report.createdBy?.username || 'Autor não informado'}
-                  </p>
-                </div>
+                
 
 
               </div>

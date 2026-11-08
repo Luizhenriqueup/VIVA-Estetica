@@ -15,28 +15,20 @@ export default function Alertas() {
   return <>
     <PageTitle title="Notificações de eventos adversos">Notificações e orientações para a equipe.</PageTitle>
 
-    {deletion.canDelete && (
+    
       <Link
         to="/alertas/novo"
         className="btn btn-verde mb-3 me-3"
       >
         Nova Notificação
       </Link>
-    )}
+   
 
     {location.state?.created && (
       <div className="alert alert-success" role="status">
         Notificação publicado com sucesso.
       </div>
     )}
-
-    <button
-      className="btn btn-outline-success mb-3"
-      disabled={loading}
-      onClick={reload}
-    >
-      Atualizar notificações
-    </button>
 
     {deletion.error && <ErrorState error={deletion.error} />}
 
@@ -53,7 +45,9 @@ export default function Alertas() {
                   {alert.title}
                 </h2>
                 
-                  <div className="d-flex checklist-card-footer gap-2">
+                    <p className="text-break mt-2 align-items-center">
+                      <strong>Por:</strong> {alert.createdBy?.username || 'Autor não informado'}
+                    </p>
 
                     <div className='mt-2'>
                       <Link className="btn btn-outline-success" to={'/alertas/' + encodeURIComponent(alert.id)}>
@@ -72,11 +66,8 @@ export default function Alertas() {
                       }
                     </div>
 
-                    <p className="text-break align-items-end m-0">
-                      <strong>Por:</strong> {alert.createdBy?.username || 'Autor não informado'}
-                    </p>
                     
-                  </div>
+                  
                 
               </div>
             </article>

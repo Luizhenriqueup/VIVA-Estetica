@@ -14,9 +14,12 @@ function includeCreator(report) {
   return { ...data, createdBy: user };
 }
 
-async function getAll({ skip, take }) {
+async function getAll({ skip, take, userId, canViewAll }) {
+  const where = canViewAll ? {} : { userId };
+
   const [data, total] = await Promise.all([
     prisma.report.findMany({
+      where,
       skip,
       take,
       orderBy: [
@@ -25,16 +28,18 @@ async function getAll({ skip, take }) {
       ],
       select: reportSelect,
     }),
-    prisma.report.count(),
+    prisma.report.count({ where }),
   ]);
+
   return { data: data.map(includeCreator), total };
 }
 
-async function getByIdForUser(id, userId) {
+async function getByIdForUser(id, userId, canViewAll) {
   const report = await prisma.report.findFirst({
-    where: { id, userId },
+    where: canViewAll ? { id } : { id, userId },
     select: reportSelect,
   });
+
   return report ? includeCreator(report) : null;
 }
 

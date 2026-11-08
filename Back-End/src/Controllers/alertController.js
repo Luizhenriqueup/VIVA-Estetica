@@ -3,7 +3,11 @@ import { paginatedResponse, parsePagination } from "../utils/pagination.js";
 import { Flags } from "../domain/flags.js";
 
 function canViewAllAlerts(auth) {
-  return auth.flags.includes(Flags.ADMIN) || auth.flags.includes(Flags.GERENTE);
+  return !auth.isTemp && (
+    auth.flags.includes(Flags.ADMIN) ||
+    auth.flags.includes(Flags.GERENTE) ||
+    auth.flags.includes(Flags.FUNCIONARIO)
+  );
 }
 
 async function getAllAction(req, res) {

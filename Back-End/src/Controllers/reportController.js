@@ -1,5 +1,6 @@
 import reportService from "../services/reportService.js";
 import { paginatedResponse, parsePagination } from "../utils/pagination.js";
+import { Flags } from "../domain/flags.js";
 
 async function getAllAction(req, res) {
   const pagination = parsePagination(req.query);
@@ -9,12 +10,25 @@ async function getAllAction(req, res) {
     });
   }
 
-  const { data, total } = await reportService.getAll(pagination);
+  const { data, total } = await reportService.getAll({
+    ...pagination,
+    userId: req.auth.userId,
+    canViewAll: canViewAllReports(req.auth),
+  });
   res.json(paginatedResponse(data, total, pagination));
 }
 
+function canViewAllReports(auth) {
+  return auth.flags.includes(Flags.ADMIN) ||
+    auth.flags.includes(Flags.GERENTE);
+}
+
 async function getByIdAction(req, res) {
-  const report = await reportService.getByIdForUser(req.params.id, req.auth.userId);
+  const report = await reportService.getByIdForUser(
+  req.params.id,
+  req.auth.userId,
+  canViewAllReports(req.auth),
+);
   if (!report) {
     return res.status(404).json({ message: "Relatório não encontrado." });
   }
@@ -39,7 +53,11 @@ async function createAction(req, res) {
     });
   }
 
-  const report = await reportService.create(req.auth.userId, nome.trim(), questionnaire);
+  const report = await reportService.create(
+    req.auth.userId,
+    nome.trim(),
+    questionnaire,
+  );
   res.status(201).json(report);
 }
 
@@ -52,4 +70,4 @@ async function deleteAction(req, res) {
   res.status(204).end();
 }
 
-export default { getAllAction, getByIdAction, createAction, deleteAction };
+export default { getAllAction, getByIdAction, createAction, deleteAction, canViewAllReports };

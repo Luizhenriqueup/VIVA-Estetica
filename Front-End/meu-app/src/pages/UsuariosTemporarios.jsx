@@ -60,9 +60,6 @@ function Usuarios({ admin }) {
       <div className="card-body p-3 p-md-4">
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
           <h2 id="users-list-title" className="h5 mb-0">Usuários da equipe</h2>
-          <button type="button" className="btn btn-outline-success" disabled={loading} onClick={reload}>
-            Atualizar lista
-          </button>
         </div>
         {loading ? <Loading /> : error ? <ErrorState error={error} onRetry={reload} /> : users.length === 0 ? (
           <EmptyState title="Nenhum usuário ativado" icon="bi-people">
@@ -74,17 +71,25 @@ function Usuarios({ admin }) {
               <thead>
                 <tr>
                   <th scope="col"></th>
+                  <th scope="col" className="d-none d-md-table-cell"></th>
                   <th scope="col"></th>
-                  <th scope="col">Status</th>
                   {admin && <th scope="col" className="text-end"></th>}
                 </tr>
               </thead>
               <tbody>
                 {visible.map((user) => {
                   const status = ACCOUNT_STATUS[accountStatus(user)];
+                  const cargo =
+                    resolverPerfis(user.flags).map((profile) => profile.nome).join(' · ') ||
+                    'Nenhum cargo atribuído';
                   return <tr key={user.userId}>
-                    <th scope="row" className="text-break fw-semibold">{user.username}</th>
-                    <td>{resolverPerfis(user.flags).map((profile) => profile.nome).join(' · ') || 'Nenhum cargo atribuído'}</td>
+                    <th scope="row" className="text-break fw-semibold">
+                      {user.username}
+                      <span className="d-block d-md-none small fw-normal text-muted">
+                        {cargo}
+                      </span>
+                    </th>
+                    <td className="d-none d-md-table-cell">{cargo}</td>
                     <td><span className={'badge ' + status.color}>{status.label}</span></td>
                     {admin && <td className="text-end">
                       <button

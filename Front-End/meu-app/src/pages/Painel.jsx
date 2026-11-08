@@ -73,7 +73,7 @@ export default function Painel() {
       <div className="col-12 col-xl-6">
         <section className="card border-0 shadow-sm" aria-labelledby="painel-checklists">
           <div className="card-body p-3 p-md-4">
-            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">Últimos checklists da equipe</h2>
+            <h2 id="painel-checklists" className="h5 painel-resumo__titulo mb-3">Últimos checklists</h2>
             <ResourceContent resource={reports} empty="Nenhum checklist realizado até o momento.">
               {checklists.map((report) => {
                 const createdAt = checklistTime(report);
