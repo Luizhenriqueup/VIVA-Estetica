@@ -37,9 +37,14 @@ export default function Alertas() {
           <div className="col-12 col-xl-6" key={alert.id}>
             <article className="card h-100 border-0 shadow-sm">
               <div className="card-body">
-                <h2 className="h5 text-break mb-4">
-                  {alert.title}
-                </h2>
+                <div className="d-flex align-items-start justify-content-between gap-2 mb-4">
+                  <h2 className="h5 text-break mb-0">{alert.title}</h2>
+                  <span title={alert.resolved ? 'Resolvido' : 'Pendente'}
+                    className={'rounded-circle flex-shrink-0 mt-2 ' + (alert.resolved ? 'bg-success' : 'bg-warning')}
+                    style={{ width: 8, height: 8 }}>
+                    <span className="visually-hidden">{alert.resolved ? 'Resolvido' : 'Pendente'}</span>
+                  </span>
+                </div>
                 
                     <p className="text-break mt-2 align-items-center">
                       <strong>Por:</strong> {alert.createdBy?.username || 'Autor não informado'}

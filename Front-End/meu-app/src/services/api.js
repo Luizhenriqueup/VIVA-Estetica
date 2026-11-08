@@ -157,6 +157,10 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
     },
     alerts: (signal) => list('/alerts', signal),
     alert: (id, signal) => request(`/alerts/${encodeURIComponent(id)}`, { signal }),
+    updateAlertStatus: (id, resolved) => request(`/alerts/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: { resolved },
+    }),
     deleteAlert: (id) => remove(`/alerts/${encodeURIComponent(id)}`),
     createAlert: ({ title, message }) => request('/alerts', { method: 'POST', body: { title: title.trim(), message: message.trim() } }),
   };

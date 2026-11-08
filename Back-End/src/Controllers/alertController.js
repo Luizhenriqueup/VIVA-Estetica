@@ -52,8 +52,8 @@ async function createAction(req, res) {
 }
 
 async function updateAction(req, res) {
-  const { title, message } = req.body ?? {};
-  if (title === undefined && message === undefined) {
+  const { title, message, resolved } = req.body ?? {};
+  if (title === undefined && message === undefined && resolved === undefined) {
     return res.status(400).json({ message: "Informe ao menos um campo para atualizar." });
   }
   if (title !== undefined && (typeof title !== "string" || title.trim().length === 0)) {
@@ -62,12 +62,21 @@ async function updateAction(req, res) {
   if (message !== undefined && message !== null && typeof message !== "string") {
     return res.status(400).json({ message: "O campo message deve ser texto ou null." });
   }
+  if (resolved !== undefined && typeof resolved !== "boolean") {
+    return res.status(400).json({ message: "O campo resolved deve ser booleano." });
+  }
 
-  const alert = await alertService.update(req.params.id, {
-    ...(title !== undefined ? { title: title.trim() } : {}),
-    ...(message !== undefined ? { message } : {}),
-  });
-  res.json(alert);
+  try {
+    const alert = await alertService.update(req.params.id, {
+      ...(title !== undefined ? { title: title.trim() } : {}),
+      ...(message !== undefined ? { message } : {}),
+      ...(resolved !== undefined ? { resolved } : {}),
+    });
+    res.json(alert);
+  } catch (error) {
+    if (error.code !== "P2025") throw error;
+    return res.status(404).json({ message: "Alerta não encontrado." });
+  }
 }
 
 async function deleteAction(req, res) {

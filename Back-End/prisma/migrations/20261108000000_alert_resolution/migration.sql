@@ -1,0 +1,1 @@
+ALTER TABLE "Alert" ADD COLUMN "resolved" BOOLEAN NOT NULL DEFAULT false;

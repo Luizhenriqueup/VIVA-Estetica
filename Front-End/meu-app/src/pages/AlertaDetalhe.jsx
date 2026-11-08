@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { formatDate } from '../utils/formatDate';
 import useViewedRecord from '../hooks/useViewedRecord';
 import useRecordDeletion from '../hooks/useRecordDeletion';
@@ -16,25 +17,58 @@ function AlertaRecord({ id }) {
   const { data, loading, error, reload } = useViewedRecord('notification', id);
   const deletion = useRecordDeletion(api.deleteAlert, () => navigate('/alertas', { replace: true }));
   const deleting = deletion.deleting !== null;
+  const [savingStatus, setSavingStatus] = useState(false);
+  const [statusError, setStatusError] = useState(null);
+  const statusLock = useRef(false);
+  const hasAlert = !loading && !error && data?.id === id;
+  const resolved = data?.resolved === true;
+
+  async function changeStatus() {
+    if (!hasAlert || !deletion.canDelete || deleting || statusLock.current) return;
+    statusLock.current = true;
+    setSavingStatus(true);
+    setStatusError(null);
+    try {
+      await api.updateAlertStatus(id, !resolved);
+      reload();
+    } catch (failure) {
+      setStatusError(failure);
+    } finally {
+      statusLock.current = false;
+      setSavingStatus(false);
+    }
+  }
 
   return <>
     <div className="d-flex flex-wrap gap-2 mb-4">
-      <button type="button" className="btn btn-outline-success" disabled={deleting} onClick={() => navigate(-1)}>
+      <button type="button" className="btn btn-outline-success" disabled={deleting || savingStatus} onClick={() => navigate(-1)}>
         Voltar
       </button>
-      {!loading && !error && data?.id === id && deletion.canDelete && (
-        <button type="button" className="btn btn-outline-danger" disabled={deleting}
+      {hasAlert && deletion.canDelete && (
+        <button type="button" className="btn btn-outline-danger" disabled={deleting || savingStatus}
           onClick={() => deletion.remove(id, 'a notificação "' + data.title + '"')}>
-          <i className="bi bi-trash me-1" aria-hidden="true" />
           {deleting ? 'Excluindo…' : 'Excluir notificação'}
         </button>
       )}
+      {deletion.canDelete && (
+            <button type="button" className="btn btn-sm btn-outline-primary" disabled={savingStatus || deleting}
+              onClick={changeStatus}>
+              {savingStatus ? 'Salvando…' : resolved ? 'Mudar Status' : 'Mudar Status'}
+            </button>
+          )}
     </div>
     {deletion.error && <ErrorState error={deletion.error} />}
+    {statusError && <ErrorState error={statusError} />}
     {loading ? <Loading /> : error ? 
     <ErrorState error={error} onRetry={reload} /> :
     <article className="card border-0 shadow-sm">
       <div className="card-body p-4">
+        <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+          <span className={'badge ' + (resolved ? 'text-bg-success' : 'text-bg-warning')}>
+            {resolved ? 'Resolvido' : 'Pendente'}
+          </span>
+          
+        </div>
 
         <PageTitle title={data.title}>
           {formatDate(data.createdAt)}
