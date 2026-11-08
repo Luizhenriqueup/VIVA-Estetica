@@ -21,7 +21,7 @@ export const videos = [
   {
     id: 'video',
     titulo: 'Video De Teste',
-    descricao: 'video de edcução',
+    descricao: 'video de educação',
     youtubeId: 'uQK3SroAziw',
   }
 ];
