@@ -13,6 +13,8 @@ router.get('/me', authMiddleware, authController.meAction);
 router.get('/users', authMiddleware, flagMiddleware([Flags.ADMIN, Flags.GERENTE]),authController.searchUserAction);
 router.post('/logout', authMiddleware, authController.logoutAction);
 router.put('/flags', authMiddleware, flagMiddleware(Flags.ADMIN), authController.setFlagsAction);
-router.delete('/:id', authMiddleware, authController.deleteAction);
+router.patch('/users/:id/disable', authMiddleware, flagMiddleware(Flags.ADMIN), authController.disableOtherUserAction,);
+router.patch('/users/:id/enable', authMiddleware, flagMiddleware(Flags.ADMIN), authController.enableOtherUserAction,);
+//router.delete('/:id', authMiddleware, authController.deleteAction);
 
 export default router;

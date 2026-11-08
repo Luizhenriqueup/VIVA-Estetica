@@ -66,8 +66,8 @@ async function registerTemporaryUser(userId, { username, password }) {
 
 async function login({ username, password }) {
   const user = await prisma.user.findUnique({ where: { username } });
-  if (!user || !(await verifyPassword(password, user.salt, user.hash))) {
-    return null;
+  if (!user || user.disabledAt || !(await verifyPassword(password, user.salt, user.hash))) {
+  return null;
   }
 
   const token = generateDigits(43);
@@ -93,6 +93,7 @@ async function findActiveToken(tokenHash) {
     where: {
       tokenHash,
       expiresAt: { gt: new Date() },
+      user: { is: { disabledAt: null } },
     },
     select: {
       userId: true,
@@ -154,6 +155,7 @@ async function getAllUsers({ skip, take }) {
         username: true,
         flags: true,
         isTemp: true,
+        disabledAt: true,
       },
     }),
     prisma.user.count(),
@@ -168,11 +170,66 @@ async function logout(tokenHash) {
   return result.count === 1;
 }
 
+/*
+---------Função de delete desativada---------------
 async function deleteUser(userId) {
   const result = await prisma.user.deleteMany({
     where: { userId },
   });
   return result.count === 1;
+}*/
+
+async function disableUser(userId) {
+  return prisma.$transaction(async (transaction) => {
+    const user = await transaction.user.findUnique({
+      where: { userId },
+      select: { disabledAt: true, isTemp: true, flags: true },
+    });
+
+    if (!user) return "not-found";
+    if (user.disabledAt) return "disabled";
+
+    if (!user.isTemp && user.flags.includes(Flags.ADMIN)) {
+      const enabledAdmins = await transaction.user.count({
+        where: {
+          isTemp: false,
+          disabledAt: null,
+          flags: { has: Flags.ADMIN },
+        },
+      });
+
+      if (enabledAdmins <= 1) return "last-admin";
+    }
+
+    await transaction.user.update({
+      where: { userId },
+      data: { disabledAt: new Date() },
+    });
+
+    await transaction.authToken.deleteMany({ where: { userId } });
+
+    return "disabled";
+  }, { isolationLevel: "Serializable" });
+}
+
+async function enableUser(userId) {
+  return prisma.$transaction(async (transaction) => {
+    const user = await transaction.user.findUnique({
+      where: { userId },
+      select: { disabledAt: true },
+    });
+
+    if (!user) return "not-found";
+    if (user.disabledAt === null) return "enabled";
+
+    await transaction.authToken.deleteMany({ where: { userId } });
+    await transaction.user.update({
+      where: { userId },
+      data: { disabledAt: null },
+    });
+
+    return "enabled";
+  }, { isolationLevel: "Serializable" });
 }
 
 async function setFlags(userId, flags) {
@@ -189,7 +246,24 @@ async function setFlags(userId, flags) {
       if (user.isTemp) {
         return { status: "temporary-user" };
       }
+      const isRemovingEnabledAdmin =
+        user.disabledAt === null &&
+        user.flags.includes(Flags.ADMIN) &&
+        !flags.includes(Flags.ADMIN);
 
+      if (isRemovingEnabledAdmin) {
+        const adminCount = await transaction.user.count({
+          where: {
+            isTemp: false,
+            disabledAt: null,
+            flags: { has: Flags.ADMIN },
+          },
+        });
+
+        if (adminCount <= 1) {
+          return { status: "last-admin" };
+        }
+      }
       const isRemovingAdmin =
         user.flags.includes(Flags.ADMIN) && !flags.includes(Flags.ADMIN);
       if (isRemovingAdmin) {
@@ -221,7 +295,8 @@ export default {
   findActiveToken,
   getCurrentUser,
   logout,
-  deleteUser,
+  disableUser,
+  enableUser,
   setFlags,
   findUserByUsername,
   getAllUsers,

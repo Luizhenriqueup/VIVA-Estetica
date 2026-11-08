@@ -83,6 +83,14 @@ export function createApi({ baseUrl = '', getSession = () => null, onUnauthorize
       return users;
     },
     searchUser: (username, signal) => request('/auth/users?username=' + encodeURIComponent(username.trim()), { signal }),
+    enableUser: (userId) =>
+      request(`/auth/users/${encodeURIComponent(userId)}/enable`, {
+        method: 'PATCH',
+    }),
+    disableUser: (userId) =>
+      request(`/auth/users/${encodeURIComponent(userId)}/disable`, {
+        method: 'PATCH',
+      }),
     updateUserFlags: async (userId, flags) => {
       const actor = await me();
       if (actor.isTemp || !actor.flags.includes(PERFIS.Admin.id)) throw new ApiError('Você não tem permissão para esta operação.', 403);

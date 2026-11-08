@@ -68,6 +68,8 @@ async function meAction(req, res) {
   res.json(user);
 }
 
+/*
+----------Desativada a função de delete-----------
 async function deleteAction(req, res) {
   if (req.params.id !== req.auth.userId) {
     return res.status(403).json({ message: "Você só pode excluir sua própria conta." });
@@ -79,6 +81,52 @@ async function deleteAction(req, res) {
   }
 
   res.status(204).end();
+}*/
+
+async function disableAccount(res, userId) {
+  const result = await authService.disableUser(userId);
+
+  if (result === "not-found") {
+    return res.status(404).json({ message: "Usuário não encontrado." });
+  }
+
+  if (result === "last-admin") {
+    return res.status(409).json({
+      message: "Não é possível desativar o último administrador habilitado.",
+    });
+  }
+
+  return res.status(204).end();
+}
+
+async function deleteAction(req, res) {
+  if (req.params.id !== req.auth.userId) {
+    return res.status(403).json({
+      message: "Você só pode desativar sua própria conta por esta rota.",
+    });
+  }
+
+  return disableAccount(res, req.auth.userId);
+}
+
+async function enableOtherUserAction(req, res) {
+  const result = await authService.enableUser(req.params.id);
+
+  if (result === "not-found") {
+    return res.status(404).json({ message: "Usuário não encontrado." });
+  }
+
+  return res.status(204).end();
+}
+
+async function disableOtherUserAction(req, res) {
+  if (req.params.id === req.auth.userId) {
+    return res.status(403).json({
+      message: "Use a opção de desativar a própria conta.",
+    });
+  }
+
+  return disableAccount(res, req.params.id);
 }
 
 async function searchUserAction(req, res) {
@@ -150,6 +198,9 @@ export default {
   registerAction,
   logoutAction,
   meAction,
+  disableAccount,
+  disableOtherUserAction,
+  enableOtherUserAction,
   deleteAction,
   setFlagsAction,
   searchUserAction,

@@ -8,6 +8,17 @@ import EditarCargoUsuario from '../components/Usuarios/EditarCargoUsuario';
 import useResource from '../hooks/useResource';
 
 const PAGE_SIZE = 20;
+const ACCOUNT_STATUS = {
+  enabled: { label: 'Ativada', color: 'text-bg-success' },
+  disabled: { label: 'Desativada', color: 'text-bg-secondary' },
+  unknown: { label: 'Indisponível', color: 'text-bg-light' },
+};
+
+function accountStatus(user) {
+  if (user.disabledAt === null) return 'enabled';
+  if (typeof user.disabledAt === 'string' && Number.isFinite(Date.parse(user.disabledAt))) return 'disabled';
+  return 'unknown';
+}
 
 export default function UsuariosTemporarios() {
   const access = useUsersAccess();
@@ -18,7 +29,7 @@ export default function UsuariosTemporarios() {
 }
 
 function Usuarios({ admin }) {
-  const { api } = useAuth();
+  const { api, session } = useAuth();
   const { data, loading, error, reload } = useResource(api.listUsers);
   const [page, setPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -27,6 +38,12 @@ function Usuarios({ admin }) {
   const totalPages = Math.ceil(users.length / PAGE_SIZE);
   const currentPage = Math.min(page, Math.max(1, totalPages));
   const visible = users.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  function handleStatusChanged(user, action) {
+    setSelectedUser(null);
+    setSuccess(`Conta de ${user.username} ${action === 'enable' ? 'reativada' : 'desativada'} com sucesso.`);
+    reload();
+  }
 
   function handleSaved(user) {
     setSelectedUser(null);
@@ -58,14 +75,17 @@ function Usuarios({ admin }) {
                 <tr>
                   <th scope="col"></th>
                   <th scope="col"></th>
+                  <th scope="col">Status</th>
                   {admin && <th scope="col" className="text-end"></th>}
                 </tr>
               </thead>
               <tbody>
-                {visible.map((user) => (
-                  <tr key={user.userId}>
+                {visible.map((user) => {
+                  const status = ACCOUNT_STATUS[accountStatus(user)];
+                  return <tr key={user.userId}>
                     <th scope="row" className="text-break fw-semibold">{user.username}</th>
                     <td>{resolverPerfis(user.flags).map((profile) => profile.nome).join(' · ') || 'Nenhum cargo atribuído'}</td>
+                    <td><span className={'badge ' + status.color}>{status.label}</span></td>
                     {admin && <td className="text-end">
                       <button
                         type="button"
@@ -76,8 +96,8 @@ function Usuarios({ admin }) {
                         Editar
                       </button>
                     </td>}
-                  </tr>
-                ))}
+                  </tr>;
+                })}
               </tbody>
             </table>
           </div>
@@ -92,7 +112,14 @@ function Usuarios({ admin }) {
       </div>
     </section>
     {admin && selectedUser && (
-      <EditarCargoUsuario user={selectedUser} onCancel={() => setSelectedUser(null)} onSaved={handleSaved} />
+      <EditarCargoUsuario
+        user={selectedUser}
+        status={accountStatus(selectedUser)}
+        canChangeStatus={Boolean(session?.userId) && selectedUser.userId !== session.userId}
+        onCancel={() => setSelectedUser(null)}
+        onSaved={handleSaved}
+        onStatusChanged={handleStatusChanged}
+      />
     )}
   </>;
 }
