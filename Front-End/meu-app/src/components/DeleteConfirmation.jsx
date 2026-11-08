@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 import '../styles/Checklist.css';
 
-export default function DeleteConfirmation({ record, pending, onCancel, onConfirm }) {
+export default function DeleteConfirmation({ record, pending, onCancel, onConfirm, discard }) {
   const dialog = useRef(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -21,14 +21,32 @@ export default function DeleteConfirmation({ record, pending, onCancel, onConfir
   return <dialog ref={dialog} className="checklist-dialog p-0" aria-labelledby={titleId} aria-describedby={descriptionId}
     aria-busy={pending} onCancel={(event) => { event.preventDefault(); onCancel(); }}>
     <div className="p-4">
-      <h2 id={titleId} className="h4">Confirmar exclusão</h2>
+      <h2 id={titleId} className="h4">
+        {discard ? 'Cuidado' : 'Confirmar exclusão'}
+      </h2>
+
       <div id={descriptionId}>
-        <p>Tem certeza de que deseja excluir este registro?</p>
-        <p className="small text-muted text-break">Será excluído {record.description}. Esta ação não pode ser desfeita.</p>
+        {discard ? (
+          <p>Se voltar agora, os dados que você ainda não enviou serão perdidos.</p>
+        ) : (
+          <>
+            <p>Tem certeza de que deseja excluir este registro?</p>
+            <p className="small text-muted text-break">
+              Será excluído {record.description}. Esta ação não pode ser desfeita.
+            </p>
+          </>
+        )}
       </div>
       <div className="d-flex justify-content-end flex-wrap gap-2">
         <button type="button" autoFocus className="btn btn-outline-success" disabled={pending} onClick={onCancel}>Cancelar</button>
-        <button type="button" className="btn btn-outline-danger" disabled={pending} onClick={onConfirm}>{pending ? 'Excluindo…' : 'Excluir'}</button>
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          disabled={pending}
+          onClick={onConfirm}
+        >
+          {discard ? 'Sair e descartar' : (pending ? 'Excluindo…' : 'Excluir')}
+        </button>
       </div>
     </div>
   </dialog>;

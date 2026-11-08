@@ -3,10 +3,14 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/auth';
 import { ErrorState, PageTitle } from '../components/Feedback';
 import { ANSWERS, QUESTIONS, STAGES, isAnswer, isCompleteQuestionnaire } from '../data/checklist';
+import { useNavigate } from 'react-router-dom';
+import DeleteConfirmation from '../components/DeleteConfirmation';
 import '../styles/Checklist.css';
 
 export default function NovoChecklist() {
   const { api } = useAuth();
+  const navigate = useNavigate();
+  const [exitWarning, setExitWarning] = useState(null);
   const [started, setStarted] = useState(false);
   const [patientName, setPatientName] = useState('');
   const [nameError, setNameError] = useState('');
@@ -76,6 +80,21 @@ export default function NovoChecklist() {
     setAnswers(Array(QUESTIONS.length).fill(null)); setCompletedStages([]); setNotice(''); setError(null);
   }
   return <>
+    <button
+          type="button"
+          className="btn btn-outline-success mb-4"
+          disabled={pending}
+          onClick={() => setExitWarning({})}
+        >
+          Voltar
+        </button>
+        <DeleteConfirmation
+          record={exitWarning}
+          discard
+          pending={pending}
+          onCancel={() => setExitWarning(null)}
+          onConfirm={() => navigate(-1)}
+        />
     <PageTitle title="Checklist de segurança">Realize o Checklist das seguintes etapas:</PageTitle>
     {started && <p className="text-break"><strong>Paciente:</strong> {patientName}</p>}
     {!started ? <section className="card border-0 shadow-sm"><div className="card-body p-4 p-lg-5">

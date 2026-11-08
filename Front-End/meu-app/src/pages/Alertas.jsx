@@ -17,8 +17,7 @@ export default function Alertas() {
 
     {deletion.canDelete && (
       <Link
-        to="/relatorios"
-        state={{ createNotification: true }}
+        to="/alertas/novo"
         className="btn btn-verde mb-3 me-3"
       >
         Nova Notificação
