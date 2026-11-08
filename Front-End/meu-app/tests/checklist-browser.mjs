@@ -55,8 +55,8 @@ try {
   await page.goto(origin + '/checklists/novo');
   await visible(page.getByRole('heading', { name: 'Bem-vindo(a)' }));
   await login();
-  await page.goto(origin + '/relatorios');
-  await page.getByRole('button', { name: /Fazer Checklist/ }).click();
+  await page.goto(origin + '/checklists');
+  await page.getByRole('link', { name: 'Novo checklist', exact: true }).click();
   await page.getByRole('button', { name: 'Iniciar Checklist', exact: true }).click();
   await visible(page.getByRole('alert').filter({ hasText: 'Informe o nome do paciente' }));
   assert.equal(await page.getByRole('radio').count(), 0);

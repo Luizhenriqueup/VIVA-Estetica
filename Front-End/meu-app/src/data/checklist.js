@@ -2,7 +2,7 @@
 // Os códigos representam alternativas, não uma pontuação de risco.
 export const ANSWERS = ['Adequado', 'Parcial', 'Inadequado'];
 export const STAGES = [
-  { name: 'PRÉ', subtitle: 'Visualizar o Risco', questions: [
+  { name: 'Visualizar o Risco', subtitle: 'Pré', questions: [
     { text: 'Paciente identificado corretamente', critical: true },
     { text: 'Ficha de anamnese completa', critical: true },
     { text: 'Termo de consentimento assinado' },
@@ -12,7 +12,7 @@ export const STAGES = [
     { text: 'Procedimento confirmado verbalmente' },
     { text: 'Kit de atendimento de emergência revisado', critical: true },
   ] },
-  { name: 'DURANTE', subtitle: 'Intervir com Técnica', questions: [
+  { name: 'Intervir com Técnica', subtitle: 'Durante', questions: [
     { text: 'Produto conferido (nome, lote, validade)', critical: true },
     { text: 'Materiais com esterilidade assegurada para uso seguro', critical: true },
     { text: 'Higienização das mãos realizada' },
@@ -20,14 +20,14 @@ export const STAGES = [
     { text: 'Monitoramento de complicações e dor', critical: true },
     { text: 'Ambiente limpo e seguro' },
   ] },
-  { name: 'PÓS', subtitle: 'Validar o Processo', questions: [
+  { name: 'Validar o Processo', subtitle: 'Pós', questions: [
     { text: 'Ausência de complicações imediatas' },
     { text: 'Registro fotográfico realizado' },
     { text: 'Anotações no prontuário atualizadas' },
     { text: 'Orientações pós-procedimento entregues' },
     { text: 'Higienização final do ambiente e descarte correto dos resíduos' },
   ] },
-  { name: 'APRENDER', subtitle: 'Reflexão e Melhoria', questions: [
+  { name: 'Reflexão e Melhoria', subtitle: 'Aprender', questions: [
     { text: 'Registro de evento adverso/quase erro (se aplicável)' },
     { text: 'Comunicação efetiva entre equipe' },
   ] },

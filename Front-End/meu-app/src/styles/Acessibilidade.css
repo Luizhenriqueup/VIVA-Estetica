@@ -45,47 +45,6 @@ textarea.form-control {
   font-size: 0.9375rem;
 }
 
-.report-choice {
-  min-height: 15rem;
-  padding: 0;
-  color: inherit;
-  background: #fff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.report-choice:hover,
-.report-choice--active {
-  transform: translateY(-2px);
-  box-shadow: 0 0.5rem 1.25rem rgb(27 59 47 / 12%) !important;
-  outline: 2px solid #5f8a61;
-  outline-offset: 1px;
-}
-
-.report-choice:focus-visible {
-  outline: 3px solid #246b39;
-  outline-offset: 3px;
-}
-
-.report-choice__icon {
-  display: grid;
-  width: 3.25rem;
-  height: 3.25rem;
-  place-items: center;
-  border-radius: 0.75rem;
-  color: #244f34;
-  background: #eaf2eb;
-  font-size: 1.625rem;
-}
-
-.report-choice__icon--alert {
-  color: #7b5a12;
-  background: #f8f1df;
-}
-
-.report-choice__title {
-  color: #1b3b2f;
-}
-
 .report-form {
   scroll-margin-top: 1.5rem;
 }
@@ -93,24 +52,5 @@ textarea.form-control {
 @media (max-width: 767.98px) {
   .app-content .titulo-painel {
     font-size: 1.75rem;
-  }
-
-  .report-choice {
-    min-height: 12rem;
-  }
-
-  .report-choice .card-body {
-    padding: 1.5rem !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .report-choice {
-    transition: none;
-  }
-
-  .report-choice:hover,
-  .report-choice--active {
-    transform: none;
   }
 }

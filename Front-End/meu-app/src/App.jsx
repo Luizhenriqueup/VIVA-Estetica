@@ -5,7 +5,6 @@ import AccountGate from './components/AccountGate';
 import Layout from './components/Painel/Layout';
 import Login from './pages/Login';
 import Painel from './pages/Painel';
-import Relatorios from './pages/Relatorios';
 import Checklists from './pages/Checklists';
 import NovoChecklist from './pages/NovoChecklist';
 import ChecklistDetalhe from './pages/ChecklistDetalhe';
@@ -14,6 +13,7 @@ import NovaNotificacao from './pages/NovaNotificacao';
 import AlertaDetalhe from './pages/AlertaDetalhe';
 import POPs from './pages/POPs';
 import Conteudo from './pages/Conteudo';
+import Ajuda from './pages/Ajuda';
 import UsuariosTemporarios from './pages/UsuariosTemporarios';
 export default function App() {
   return (
@@ -29,7 +29,6 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/painel" element={<Painel />} />
-              <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/checklists" element={<Checklists />} />
               <Route path="/checklists/novo" element={<NovoChecklist />} />
               <Route path="/checklists/:id" element={<ChecklistDetalhe />} />
@@ -38,6 +37,7 @@ export default function App() {
               <Route path="/alertas/:id" element={<AlertaDetalhe />} />
               <Route path="/pops" element={<POPs />} />
               <Route path="/conteudo" element={<Conteudo />} />
+              <Route path="/ajuda" element={<Ajuda />} />
               <Route
                 path="/usuarios-temporarios"
                 element={<UsuariosTemporarios />}

@@ -97,28 +97,31 @@ try {
   await visible(page.getByText('Não informado pelo sistema'));
   assert.equal(await page.getByRole('button', { name: /Administrador|Gerente|Funcionário/ }).count(), 0);
   check('persistência sem senha ou perfil fictício');
-  for (const [route, title] of [['/relatorios', 'Relatórios'], ['/checklists', 'Checklists feitos'], ['/alertas', 'Alertas'], ['/pops', 'POPs'], ['/conteudo', 'Conteúdo educativo'], ['/ativar-conta', 'Ativar conta temporária']]) await nav(route, title);
+  for (const [route, title] of [['/checklists', 'Checklists feitos'], ['/alertas', 'Notificações de eventos adversos'], ['/pops', 'POPs'], ['/conteudo', 'Conteúdo educativo'], ['/ativar-conta', 'Ativar conta temporária']]) await nav(route, title);
   check('todas as páginas navegáveis');
-  await nav('/relatorios', 'Relatórios');
-  assert.equal(await page.getByRole('button', { name: 'Finalizar checklist' }).isDisabled(), true);
-  await page.getByLabel('Nome do cliente').fill('Cliente de teste');
-  await page.getByRole('button', { name: 'Alerta', exact: true }).click();
-  await page.getByRole('button', { name: 'Publicar alerta' }).click();
+  await nav('/checklists', 'Checklists feitos');
+  await page.getByRole('link', { name: 'Novo checklist', exact: true }).click();
+  await visible(page.getByRole('heading', { name: 'Checklist de segurança', exact: true }));
+  await nav('/alertas', 'Notificações de eventos adversos');
+  await page.getByRole('link', { name: 'Nova Notificação', exact: true }).click();
+  await page.getByRole('button', { name: 'Publicar notificação' }).click();
   assert.equal(creates, 0);
-  await page.getByLabel('Título do alerta').fill('Alerta novo');
-  await page.getByLabel('Descrição do alerta').fill('Descrição nova');
-  await page.getByRole('button', { name: 'Publicar alerta' }).click();
+  await page.getByLabel('Título da notificação').fill('Alerta novo');
+  await page.getByLabel('Descrição da notificação').fill('Descrição nova');
+  await page.getByRole('button', { name: 'Publicar notificação' }).click();
   await visible(page.getByRole('alert').filter({ hasText: 'Você não tem permissão' }));
-  check('checklist não envia dados incompatíveis e funcionário recebe 403');
+  check('atalhos de criação nas listas e resposta 403 simulada');
   for (const profile of ['Gerente', 'Admin']) {
     role = profile;
-    await page.getByRole('button', { name: 'Publicar alerta' }).click();
-    await visible(page.getByRole('status').filter({ hasText: 'Alerta publicado com sucesso.' }));
+    await page.getByRole('button', { name: 'Publicar notificação' }).click();
+    await visible(page.getByRole('status').filter({ hasText: 'Notificação publicado com sucesso.' }));
     await visible(page.getByRole('heading', { name: 'Alerta novo', exact: true }));
     check('publicação permitida com resposta simulada para ' + profile);
     if (profile === 'Gerente') {
-      await nav('/relatorios', 'Relatórios'); await page.getByRole('button', { name: 'Alerta', exact: true }).click();
-      await page.getByLabel('Título do alerta').fill('Alerta novo'); await page.getByLabel('Descrição do alerta').fill('Descrição nova');
+      await nav('/alertas', 'Notificações de eventos adversos');
+      await page.getByRole('link', { name: 'Nova Notificação', exact: true }).click();
+      await page.getByLabel('Título da notificação').fill('Alerta novo');
+      await page.getByLabel('Descrição da notificação').fill('Descrição nova');
     }
   }
   await page.getByRole('link', { name: 'Abrir alerta' }).first().click();
@@ -135,7 +138,7 @@ try {
     await nav('/painel', 'Painel'); await visible(page.getByText('Meus registros de relatório'));
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label + ' sem overflow');
     await page.screenshot({ path: path.join(output, label + '.png'), fullPage: true });
-    for (const [route, title] of [['/checklists', 'Checklists feitos'], ['/relatorios', 'Relatórios'], ['/alertas', 'Alertas'], ['/pops', 'POPs'], ['/conteudo', 'Conteúdo educativo']]) {
+    for (const [route, title] of [['/checklists', 'Checklists feitos'], ['/alertas', 'Notificações de eventos adversos'], ['/pops', 'POPs'], ['/conteudo', 'Conteúdo educativo']]) {
       await nav(route, title);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label + ' ' + route);
     }

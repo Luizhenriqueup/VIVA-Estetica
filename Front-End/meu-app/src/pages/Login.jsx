@@ -10,7 +10,7 @@ export default function Login() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const destination = location.state?.from;
-  if (session) return <Navigate to={typeof destination === 'string' && /^\/(painel|relatorios|checklists|alertas|pops|conteudo|ativar-conta)(\/|$)/.test(destination) ? destination : '/painel'} replace />;
+  if (session) return <Navigate to={typeof destination === 'string' && /^\/(painel|checklists|alertas|pops|conteudo|ajuda|ativar-conta)(\/|$)/.test(destination) ? destination : '/painel'} replace />;
   async function handleLogin(credentials) {
     setPending(true); setError('');
     try { await login(credentials); } catch (err) { setError(err.message); } finally { setPending(false); }

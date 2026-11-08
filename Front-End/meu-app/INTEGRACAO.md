@@ -20,7 +20,7 @@ O frontend foi adaptado aos contratos encontrados no backend, preservando React,
 - Rotas protegidas por autenticação e retorno à página originalmente solicitada.
 - Remoção do usuário “Vanesa” e dos perfis mockados. O seletor agora apenas exibe perfis confirmados quando houver um contrato que os forneça; atualmente mostra “Não informado pelo sistema”.
 - Painel com contagens reais de registros do usuário e alertas. Checklists concluídos e alto risco aparecem como indisponíveis, sem zero fictício.
-- Relatórios com seleção de checklist ou alerta. Checklist possui estrutura inicial e nome do cliente, mas não envia nem persiste dados que o backend descartaria.
+- Criação de checklist e notificação pelas respectivas páginas de listagem.
 - Criação de alerta por title/message, validação, bloqueio de envio duplicado, loading, sucesso e erros; listagem recarregada após publicação.
 - Alertas listados e abertos pelo endpoint de detalhe. Nenhuma marcação de leitura é simulada.
 - Checklists feitos mostra os registros de relatório realmente retornados, sem inventar cliente, data, status ou PDF.
@@ -57,7 +57,7 @@ Caminhos relativos a Front-End/meu-app. Arquivos não listados permaneceram igua
 | src/hooks/useResource.js | Carregamento, erro, retry e cancelamento de leituras ao sair da tela. |
 | src/pages/Login.jsx | Integra autenticação e feedback; mantém identidade visual e orienta sobre acesso temporário. |
 | src/pages/Painel.jsx | Substitui mock por métricas reais e indisponibilidade explícita das métricas ausentes. |
-| src/pages/Relatorios.jsx | Estrutura de checklist e formulário integrado de alerta. |
+| src/pages/NovoChecklist.jsx e src/pages/NovaNotificacao.jsx | Formulários de criação acessados pelas respectivas listagens. |
 | src/pages/Checklists.jsx | Tabela responsiva dos registros do usuário; campos ausentes e PDF indisponível. |
 | src/pages/Alertas.jsx | Listagem, datas, mensagens, refresh e confirmação de criação. |
 | src/pages/AlertaDetalhe.jsx | Leitura individual do alerta e descrição preservando quebras de linha. |
