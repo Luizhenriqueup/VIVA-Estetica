@@ -3,7 +3,7 @@ import { PageTitle } from '../components/Feedback';
 export default function Relatorios() {
   const navigate = useNavigate();
   return <>
-    <PageTitle title="Relatórios">Escolha o que você precisa fazer.</PageTitle>
+    <PageTitle title="Criação de Relatórios">Escolha o que você precisa fazer.</PageTitle>
     <div className="row g-4 mb-4">
       <div className="col-12 col-md-6">
         <button type="button" className="report-choice card border-0 shadow-sm text-start w-100 h-100"
