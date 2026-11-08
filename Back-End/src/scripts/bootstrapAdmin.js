@@ -18,8 +18,10 @@ async function bootstrapAdmin() {
     where: { flags: { has: Flags.ADMIN } },
     select: { userId: true },
   });
+  
   if (existingAdmin) {
-    throw new Error("Já existe uma conta Admin; o bootstrap inicial não pode ser repetido.");
+    console.log("Já existe uma conta Admin. Pulando criação inicial.");
+    return;
   }
 
   const salt = generateDigits(16);
