@@ -18,9 +18,10 @@ export default function Alertas() {
     
       <Link
         to="/alertas/novo"
-        className="btn btn-verde mb-3 me-3"
+        className="btn btn-verde mb-3 me-3 p-3 fs-6"
       >
-        Nova Notificação
+        <i className="bi bi-bell" />
+        {' '}Nova Notificação
       </Link>
    
 

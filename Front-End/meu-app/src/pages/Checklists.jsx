@@ -17,8 +17,9 @@ export default function Checklists() {
       Consulte suas respostas salvas.
     </PageTitle>
     <div className="d-flex flex-wrap gap-2 mb-4">
-      <Link to="/checklists/novo" className="btn btn-verde">
-        Novo checklist
+      <Link to="/checklists/novo" className="btn btn-verde p-3 fs-6" >
+        <i className="bi bi-card-checklist" />
+        {' '}Novo checklist
       </Link>
     </div>
     {deletion.error && 

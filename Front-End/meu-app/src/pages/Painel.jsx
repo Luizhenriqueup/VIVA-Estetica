@@ -88,8 +88,7 @@ export default function Painel() {
                         recordId={report.id}
                       />
                     </div>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center gap-2">
+                  </div>                  
                     <p className="small text-muted mb-0">
                       {report.createdAt !== null ? (
                         <time dateTime={report.createdAt}>
@@ -99,11 +98,6 @@ export default function Painel() {
                         'Data de criação não informada'
                       )}
                     </p>
-
-                    <span className="small text-muted text-break align-items-start">
-                      Criado por: {report.createdBy?.username || 'Autor não informado'}
-                    </span>
-                  </div>
                 </Link>
               </li>;
               })}
@@ -135,16 +129,11 @@ export default function Painel() {
                       recordId={alert.id} 
                     />
                   </div>
-                  <div className="d-flex justify-content-between align-items-center gap-2">
                     <p className="small text-muted mb-0">
                       {Number.isFinite(Date.parse(alert.createdAt)) ?
                       <time dateTime={alert.createdAt}>{formatDate(alert.createdAt)}</time>
                       : 'Data não informada'}
                     </p>
-                    <span className="small text-muted text-break align-items-start">
-                      Criado por: {alert.createdBy?.username || 'Autor não informado'}
-                    </span>
-                  </div>
                 </Link>
               </li>)}
             </ResourceContent>
