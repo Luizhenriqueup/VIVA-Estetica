@@ -27,7 +27,7 @@ export const STAGES = [
     { text: 'Orientações pós-procedimento entregues' },
     { text: 'Higienização final do ambiente e descarte correto dos resíduos' },
   ] },
-  { name: 'Reflexão e Melhoria', subtitle: 'Aprender', questions: [
+  { name: 'Aprender', subtitle: 'Aprender', questions: [
     { text: 'Registro de evento adverso/quase erro (se aplicável)' },
     { text: 'Comunicação efetiva entre equipe' },
   ] },

@@ -38,7 +38,7 @@ const etapas = [
   {
     id: 'aprender',
     atalho: 'Aprender',
-    titulo: 'Reflexão e Melhoria',
+    titulo: 'Aprender',
     momento: 'Aprendizado da equipe',
     icone: 'bi-book',
     orientacoes: [
