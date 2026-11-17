@@ -127,9 +127,44 @@ export const documentos = [
 ];
 export const videos = [
   {
-    id: 'video',
-    titulo: 'Video De Teste',
-    descricao: 'video de educação',
-    youtubeId: 'uQK3SroAziw',
-  }
+    id: 'Intercorrencias-graves',
+    titulo: 'Intercorrencias graves',
+    youtubeId: 'zGCwjw-iJ3c',
+  },
+  {
+    id: 'Higiene-das-mãos',
+    titulo: 'Higiene das mãos',
+    youtubeId: '1l0KkMqa6C4',
+  },
+  {
+    id: 'Identificação-do-paciente',
+    titulo: 'Identificação do paciente',
+    youtubeId: 'mp3XSyoeV3k',
+  },
+  {
+    id: 'Prevenção-de-quedas',
+    titulo: 'Prevenção de quedas',
+    youtubeId: 'B9xRhcGOTmw',
+  },
+  {
+    id: 'Prevenção-lesões-por-equipamentos',
+    titulo: 'Prevenção lesões por equipamentos',
+    youtubeId: 'KZ4FpQONTpM',
+  },
+  {
+    id: 'Checklist-procedimento-seguro',
+    titulo: 'Checklist procedimento seguro',
+    youtubeId: '9FkG4GgF174',
+  },
+  {
+    id: 'Processamento-de-artigos',
+    titulo: 'Processamento de artigos',
+    youtubeId: 'c4Zp6-wCl_A',
+  },
+  {
+    id: 'Notificação-eventos-adversos',
+    titulo: 'Notificação eventos adversos',
+    youtubeId: 'K7cxxhFpAVA',
+  },
+  
 ];
